@@ -1,0 +1,17 @@
+{
+  "name": "fireproof",
+  "version": "0.1.0",
+  "description": "Promises for Firebase objects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/setup test/spec"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "firebase": "^1.0.19",
+    "chai": "^1.9.1",
+    "mocha": "^1.21.4",
+    "firebase-admin": "^1.0.7"
+  }
+}
