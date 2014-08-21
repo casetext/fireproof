@@ -35,6 +35,25 @@ describe('Fireproof', function() {
 
   // #unauth is untestable -- it just calls out to Firebase
 
+  describe('#then', function() {
+
+    before(function() {
+      return fireproof.child('thentest').set(true);
+    });
+
+    it('hands back a snapshot of the ref by default', function(done) {
+      fireproof.child('thentest').then(function(snap) {
+        console.log('got the result!');
+        expect(snap.val()).to.equal(true);
+        done();
+      }, function() {
+        console.log('got an error!');
+        done();
+      });
+    });
+
+  });
+
   describe('#child', function() {
 
     it('returns a Fireproof to the named child of the parent', function() {
