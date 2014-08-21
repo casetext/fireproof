@@ -49,3 +49,4 @@ IE back to 8.
 ## Other
 
 To provide promises with very little code, Fireproof uses [PinkySwear.js](https://github.com/timjansen/PinkySwear.js).
+

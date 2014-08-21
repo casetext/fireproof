@@ -7,7 +7,7 @@
     "test": "mocha test/setup test/spec",
     "postpublish": "./script/postpublish.bash"
   },
-  "author": "",
+  "author": "Harry Schmidt <goldibex@casetext.com>",
   "license": "ISC",
   "devDependencies": {
     "firebase": "^1.0.19",
