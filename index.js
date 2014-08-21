@@ -139,12 +139,18 @@
 
   var pinkySwear = library.pinkySwear;
 
+
   /**
    * Fireproofs an existing Firebase reference, giving it magic promise powers.
+   * @name Fireproof
    * @constructor
    * @param {Firebase} firebaseRef A Firebase reference object.
+   * @property then A promise shortcut for .once('value'),
+   * except for references created by .push(), where it resolves on success
+   * and rejects on failure of the property object.
    * @example
-   * var fp = new Fireproof(new Firebase('https://test.firebaseio.com'));
+   * var fp = new Fireproof(new Firebase('https://test.firebaseio.com/something'));
+   * fp.then(function(snap) { console.log(snap.val()); });
    */
   function Fireproof(firebaseRef, promise) {
 
@@ -172,6 +178,14 @@
   }
 
 
+  /**
+   * Delegates Firebase#auth.
+   * @method Fireproof#auth
+   * @param {string} authToken Firebase authentication token.
+   * @param {function=} onComplete Callback on initial completion.
+   * @param {function=} onCancel Callback if we ever get disconnected.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.auth = function(authToken, onComplete, onCancel) {
 
     var promise = pinkySwear();
@@ -197,16 +211,31 @@
   };
 
 
+  /**
+   * Delegates Firebase#unauth.
+   * @method Fireproof#unauth
+   */
   Fireproof.prototype.unauth = function() {
     this._ref.unauth();
   };
 
 
+  /**
+   * Delegates Firebase#child, wrapping the child in fireproofing.
+   * @method Fireproof#child
+   * @param {string} childPath The subpath to refer to.
+   * @returns {Fireproof} A reference to the child path.
+   */
   Fireproof.prototype.child = function(childPath) {
     return new Fireproof(this._ref.child(childPath));
   };
 
 
+  /**
+   * Delegates Firebase#parent.
+   * @method Fireproof#parent
+   * @returns {Fireproof} A ref to the parent path, or null if there is none.
+   */
   Fireproof.prototype.parent = function() {
 
     if (this._ref.parent() === null) {
@@ -218,28 +247,50 @@
   };
 
 
+  /**
+   * Delegates Firebase#root.
+   * @method Fireproof#root
+   * @returns {Fireproof} A ref to the root.
+   */
   Fireproof.prototype.root = function() {
-
-    var root = this._ref.root();
-    if (root) {
-      return new Fireproof(root);
-    } else {
-      return null;
-    }
-
+    return new Fireproof(this._ref.root());
   };
 
 
+  /**
+   * Delegates Firebase#name.
+   * @method Fireproof#name
+   * @returns {string} The last component of this reference object's path.
+   */
   Fireproof.prototype.name = function() {
     return this._ref.name();
   };
 
 
+  /**
+   * Delegates Firebase#toString.
+   * @method Fireproof#toString
+   * @returns {string} The full URL of this reference object.
+   */
   Fireproof.prototype.toString = function() {
     return this._ref.toString();
   };
 
 
+  /**
+   * Delegates Firebase#set.
+   * @method Fireproof#set
+   * @param {object} value The value to set this path to.
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   * @example
+   * fireproofRef.set('something')
+   * .then(function()) {
+   *   console.log('set was successful!');
+   * }, function(err) {
+   *   console.error('error while setting:', err);
+   * });
+   */
   Fireproof.prototype.set = function(value, onComplete) {
 
     var promise = pinkySwear();
@@ -251,6 +302,13 @@
   };
 
 
+  /**
+   * Delegates Firebase#update.
+   * @method Fireproof#update
+   * @param {object} value An object with keys and values to update.
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.update = function(value, onComplete) {
 
     var promise = pinkySwear();
@@ -262,6 +320,12 @@
   };
 
 
+  /**
+   * Delegates Firebase#remove.
+   * @method Fireproof#remove
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.remove = function(onComplete) {
 
     var promise = pinkySwear();
@@ -273,6 +337,13 @@
   };
 
 
+  /**
+   * Delegates Firebase#push.
+   * @method Fireproof#push
+   * @param {object} value An object with keys and values to update.
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.push = function(value, onComplete) {
 
     var promise = pinkySwear();
@@ -287,6 +358,14 @@
   };
 
 
+  /**
+   * Delegates Firebase#setWithPriority.
+   * @method Fireproof#setWithPriority
+   * @param {object} value The value to set this path to.
+   * @param {object} priority The priority to set this path to.
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.setWithPriority = function(value, priority, onComplete) {
 
     var promise = pinkySwear();
@@ -298,6 +377,13 @@
   };
 
 
+  /**
+   * Delegates Firebase#setPriority.
+   * @method Fireproof#setPriority
+   * @param {object} priority The priority to set this path to.
+   * @param {function=} onComplete Callback when the operation is done.
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.setPriority = function(priority, onComplete) {
 
     var promise = pinkySwear();
@@ -309,6 +395,14 @@
   };
 
 
+  /**
+   * Delegates Firebase#transaction.
+   * @method Fireproof#transaction
+   * @param {function} updateFunction
+   * @param {function} onComplete
+   * @param {boolean=} applyLocally
+   * @returns {Promise} Resolves on success, rejects on failure.
+   */
   Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLocally) {
 
     var promise = pinkySwear();
@@ -333,6 +427,17 @@
   };
 
 
+  /**
+   * Delegates Firebase#on.
+   * @method Fireproof#on
+   * @param {string} eventType
+   * @param {function} callback
+   * @param {function=} cancelCallback
+   * @param {object=} context
+   * @returns {function} Your callback parameter wrapped in fireproofing. Use
+   * this return value, not your own copy of callback, to call .off(). It also
+   * functions as a promise that resolves on success and rejects on failure.
+   */
   Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) {
 
     var promise = pinkySwear();
@@ -362,6 +467,13 @@
   };
 
 
+  /**
+   * Delegates Firebase#off.
+   * @method Fireproof#off
+   * @param {string} eventType
+   * @param {function=} callback
+   * @param {object=} context
+   */
   Fireproof.prototype.off = function(eventType, callback, context) {
 
     this._ref.off(eventType, callback, context);
@@ -369,6 +481,15 @@
   };
 
 
+  /**
+   * Delegates Firebase#once.
+   * @method Fireproof#once
+   * @param {object} eventType
+   * @param {function} successCallback
+   * @param {function=} failureCallback
+   * @param {object=} context
+   * @returns {Promise} Resolves on success and rejects on failure.
+   */
   Fireproof.prototype.once = function(eventType, successCallback, failureCallback, context) {
 
     var promise = pinkySwear();
@@ -394,26 +515,58 @@
   };
 
 
+  /**
+   * Delegates Firebase#limit.
+   * @method Fireproof#limit
+   * @param {Number} limit
+   * @returns {Fireproof}
+   */
   Fireproof.prototype.limit = function(limit) {
     return new Fireproof(this._ref.limit(limit));
   };
 
 
+  /**
+   * Delegates Firebase#startAt.
+   * @method Fireproof#startAt
+   * @param {object} priority
+   * @param {string} name
+   * @returns {Fireproof}
+   */
   Fireproof.prototype.startAt = function(priority, name) {
     return new Fireproof(this._ref.startAt(priority, name));
   };
 
 
+  /**
+   * Delegates Firebase#endAt.
+   * @method Fireproof#endAt
+   * @param {object} priority
+   * @param {string} name
+   * @returns {Fireproof}
+   */
   Fireproof.prototype.endAt = function(priority, name) {
     return new Fireproof(this._ref.endAt(priority, name));
   };
 
 
+  /**
+   * Delegates Firebase#equalTo.
+   * @method Fireproof#equalTo
+   * @param {object} priority
+   * @param {string} name
+   * @returns {Fireproof}
+   */
   Fireproof.prototype.equalTo = function(priority, name) {
     return new Fireproof(this._ref.equalTo(priority, name));
   };
 
 
+  /**
+   * Delegates Firebase#ref.
+   * @method Fireproof#ref
+   * @returns {Fireproof}
+   */
   Fireproof.prototype.ref = function() {
     return new Fireproof(this._ref());
   };
