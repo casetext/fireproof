@@ -4,7 +4,8 @@
   "description": "Promises for Firebase objects.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/setup test/spec"
+    "test": "mocha test/setup test/spec",
+    "postpublish": "./script/postpublish.bash"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,8 @@
     "chai": "^1.9.1",
     "mocha": "^1.21.4",
     "firebase-admin": "^1.0.7",
-    "chai-as-promised": "^4.1.1"
+    "chai-as-promised": "^4.1.1",
+    "jsdoc": "^3.3.0-alpha9",
+    "ink-docstrap": "^0.4.12"
   }
 }

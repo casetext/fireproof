@@ -139,7 +139,13 @@
 
   var pinkySwear = library.pinkySwear;
 
-
+  /**
+   * Fireproofs an existing Firebase reference, giving it magic promise powers.
+   * @constructor
+   * @param {Firebase} firebaseRef A Firebase reference object.
+   * @example
+   * var fp = new Fireproof(new Firebase('https://test.firebaseio.com'));
+   */
   function Fireproof(firebaseRef, promise) {
 
     this._ref = firebaseRef;
@@ -311,13 +317,14 @@
 
       nextTick(function() {
         onComplete(err, committed, snap);
-      });
 
-      if (err) {
-        promise(false, [err]);
-      } else {
-        promise(true, [committed, snap]);
-      }
+        if (err) {
+          promise(false, [err]);
+        } else {
+          promise(true, [committed, snap]);
+        }
+
+      });
 
     }, applyLocally);
 
