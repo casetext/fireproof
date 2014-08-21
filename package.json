@@ -7,6 +7,10 @@
     "test": "mocha test/setup test/spec",
     "postpublish": "./script/postpublish.bash"
   },
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/casetext/fireproof.git"
+  },
   "author": "Harry Schmidt <goldibex@casetext.com>",
   "license": "ISC",
   "devDependencies": {
