@@ -169,7 +169,7 @@
           promise(false, err);
         });
 
-        return promise.then(ok || null, fail || null);
+        return promise;
 
       };
 
