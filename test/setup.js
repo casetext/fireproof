@@ -1,9 +1,10 @@
 
 'use strict';
 
-var FirebaseAccount = require('firebase-admin'),
-  Firebase = require('firebase');
+var Firebase = require('firebase');
+var chai = require('chai');
 
+chai.use(require('chai-as-promised'));
 global.expect = require('chai').expect;
 
 before(function(done) {
@@ -14,17 +15,24 @@ before(function(done) {
 
     console.log('using instance at', process.env.FIREBASE_TEST_URL);
     global.firebase = new Firebase(process.env.FIREBASE_TEST_URL);
-    firebase.auth(process.env.FIREBASE_TEST_SECRET, done);
+    global.firebaseAuthSecret = process.env.FIREBASE_TEST_SECRET;
+    done();
 
   } else {
 
-    return require('firebase-admin').bootstrapInstance(
+    require('firebase-admin').bootstrapInstance(
       process.env.FIREBASE_USER,
       process.env.FIREBASE_PASS
-    ).then(function(instance) {
+    )
+    .then(function(instance) {
       global.__bootstrappedFirebase = instance;
       console.log('bootstrapped instance', instance.toString(), 'for tests');
       global.firebase = new Firebase(instance.toString());
+      global.firebaseUrl = instance.toString();
+      return instance.getAuthTokens();
+    })
+    .then(function(tokens) {
+      global.firebaseAuthSecret = tokens[0];
     }).done(done);
 
   }

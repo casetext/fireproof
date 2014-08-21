@@ -12,6 +12,7 @@
     "firebase": "^1.0.19",
     "chai": "^1.9.1",
     "mocha": "^1.21.4",
-    "firebase-admin": "^1.0.7"
+    "firebase-admin": "^1.0.7",
+    "chai-as-promised": "^4.1.1"
   }
 }

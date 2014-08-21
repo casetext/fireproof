@@ -1,52 +1,27 @@
 
 (function (root, factory) {
 
+  'use strict';
+
   if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
-      define([], factory);
+    // AMD. Register as an anonymous module.
+    define([], factory);
   } else if (typeof exports === 'object') {
-      // Node. Does not work with strict CommonJS, but
-      // only CommonJS-like environments that support module.exports,
-      // like Node.
-      module.exports = factory();
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
   } else {
-      // Browser globals (root is window)
-      root.returnExports = factory();
+    // Browser globals (root is window)
+    root.returnExports = factory();
   }
 
 }(this, function () {
 
-  var nextTick = function(fn) {
-
-      if (typeof setImmediate !=='undefined') {
-        setImmediate(fn);
-      } else if (typeof process !== 'undefined' && process.nextTick) {
-        process.nextTick(fn);
-      } else {
-        setTimeout(fn, 0);
-      }
-
-  };
-
-  var handleErr = function(promise, onComplete) {
-
-    return function(err) {
-
-      promise(err === null);
-
-      if (typeof onComplete === 'function') {
-
-        nextTick(function() {
-          onComplete(err);
-        });
-
-      }
-    };
-
-  };
-
   var library = {};
+
   /* jshint ignore:start */
+
   (function(target) {
 
     var undef;
@@ -131,7 +106,39 @@
   })([library, 'pinkySwear']);
   /* jshint ignore:end */
 
+  var nextTick = function(fn) {
+
+    if (typeof setImmediate !== 'undefined') {
+      setImmediate(fn);
+    } else if (process && process.nextTick) {
+      process.nextTick(fn);
+    } else {
+      setTimeout(fn, 0);
+    }
+
+  };
+
+  var handleError = function(promise, onComplete) {
+
+    return function(err) {
+
+      if (onComplete && typeof onComplete === 'function') {
+
+        nextTick(function() {
+          onComplete(err);
+          promise(err === null, err ? [err] : undefined);
+        });
+
+      } else {
+        promise(err === null, err ? [err] : undefined);
+      }
+
+    };
+
+  };
+
   var pinkySwear = library.pinkySwear;
+
 
   function Fireproof(firebaseRef, promise) {
 
@@ -139,17 +146,31 @@
     if (promise && promise.then) {
       this.then = promise.then.bind(promise);
     } else {
-      this.then = pinkySwear();
-      this.then(true);
+
+      this.then = function(ok, fail) {
+
+        var promise = pinkySwear();
+
+        this._ref.once('value', function(snap) {
+          promise(true, snap);
+        }, function(err) {
+          promise(false, err);
+        });
+
+        return promise.then(ok || null, fail || null);
+
+      };
+
     }
 
   }
+
 
   Fireproof.prototype.auth = function(authToken, onComplete, onCancel) {
 
     var promise = pinkySwear();
 
-    this._ref.auth(token, function(err, info) {
+    this._ref.auth(authToken, function(err, info) {
 
       if (err !== null) {
         promise(false, [err]);
@@ -181,7 +202,13 @@
 
 
   Fireproof.prototype.parent = function() {
-    return new Fireproof(this._ref.parent());
+
+    if (this._ref.parent() === null) {
+      return null;
+    } else {
+      return new Fireproof(this._ref.parent());
+    }
+
   };
 
 
@@ -249,7 +276,7 @@
       promise
     );
 
-    return promise;
+    return rv;
 
   };
 
@@ -303,21 +330,27 @@
 
     var promise = pinkySwear();
 
-    return this._ref.on(eventType, function(snap) {
+    var callbackHandler = function(snap, prev) {
 
-      promise(true, [snap]);
       nextTick(function() {
-        callback(snap);
+        callback(snap, prev);
+        promise(true, [snap, prev]);
       });
 
-    }.bind(this), function(err) {
+    }.bind(this);
 
-      promise(false, [err]);
+    callbackHandler.then = promise.then.bind(promise);
+
+    this._ref.on(eventType, callbackHandler, function(err) {
+
       nextTick(function() {
         cancelCallback(err);
+        promise(false, [err]);
       });
 
-    }.bind(this), context);
+    }, context);
+
+    return callbackHandler;
 
   };
 
@@ -337,21 +370,21 @@
 
       promise(true, [snap]);
       nextTick(function() {
-        callback(snap);
+        successCallback(snap);
       });
 
-    }.bind(this), function(err) {
+    }, function(err) {
 
       promise(false, [err]);
       nextTick(function() {
-        cancelCallback(err);
+        failureCallback(err);
       });
 
-    }.bind(this), context);
+    }, context);
 
-     return promise;
+    return promise;
 
-   };
+  };
 
 
   Fireproof.prototype.limit = function(limit) {
@@ -377,8 +410,6 @@
   Fireproof.prototype.ref = function() {
     return new Fireproof(this._ref());
   };
-
-
 
   return Fireproof;
 
