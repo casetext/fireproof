@@ -161,15 +161,8 @@
 
       this.then = function(ok, fail) {
 
-        var promise = pinkySwear();
-
-        this._ref.once('value', function(snap) {
-          promise(true, snap);
-        }, function(err) {
-          promise(false, err);
-        });
-
-        return promise;
+        return this.once('value', function() {})
+        .then(ok || null, fail || null);
 
       };
 
