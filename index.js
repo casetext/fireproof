@@ -181,23 +181,28 @@
    */
   Fireproof.prototype.auth = function(authToken, onComplete, onCancel) {
 
-    var promise = pinkySwear();
+    var promise = pinkySwear(),
+      self = this;
 
-    this._ref.auth(authToken, function(err, info) {
+    nextTick(function() {
 
-      if (err !== null) {
-        promise(false, [err]);
-      } else {
-        promise(true, [info]);
-      }
+      self._ref.auth(authToken, function(err, info) {
 
-      if (typeof onComplete === 'function') {
-        nextTick(function() {
-          onComplete(err, info);
-        });
-      }
+        if (err !== null) {
+          promise(false, [err]);
+        } else {
+          promise(true, [info]);
+        }
 
-    }, onCancel);
+        if (typeof onComplete === 'function') {
+          nextTick(function() {
+            onComplete(err, info);
+          });
+        }
+
+      }, onCancel);
+
+    });
 
     return promise;
 
