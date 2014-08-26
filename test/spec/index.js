@@ -122,7 +122,6 @@ describe('Fireproof', function() {
 
       var didUpdate;
       return expect(fireproof.child('thing').update({ 'foo': 'bar' }, function(err) {
-        console.log('update!!!');
         didUpdate = (err === null);
       })
       .then(function() {

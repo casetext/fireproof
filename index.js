@@ -33,9 +33,7 @@
       return typeof f == 'object';
     }
     function defer(callback) {
-      if (typeof setImmediate != 'undefined')
-        setImmediate(callback);
-      else if (typeof process != 'undefined' && process['nextTick'])
+      if (typeof process != 'undefined' && process['nextTick'])
         process['nextTick'](callback);
       else
         setTimeout(callback, 0);
@@ -108,9 +106,7 @@
 
   var nextTick = function(fn) {
 
-    if (typeof setImmediate !== 'undefined') {
-      setImmediate(fn);
-    } else if (process && process.nextTick) {
+    if (process && process.nextTick) {
       process.nextTick(fn);
     } else {
       setTimeout(fn, 0);
