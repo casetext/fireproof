@@ -222,6 +222,17 @@
   }
 
 
+  /* FIXME(goldibex): Find out the reason for this demonry.
+   * For reasons completely incomprehensible to me, some type of race condition
+   * is possible if multiple Fireproof references attempt authentication at the
+   * same time, the result of which is one or more of the promises will never
+   * resolve.
+   * Accordingly, it is necessary that we wrap authentication actions in a
+   * global lock. This is accomplished using setInterval. No, I don't like it
+   * any more than you do.
+   */
+  var authing = false;
+
   /**
    * Delegates Firebase#auth.
    * @method Fireproof#auth
@@ -235,25 +246,32 @@
     var promise = pinkySwear(),
       self = this;
 
-    nextTick(function() {
+    var authIntervalId = setInterval(function() {
 
-      self._ref.auth(authToken, function(err, info) {
+      if (!authing) {
 
-        if (err !== null) {
-          promise(false, [err]);
-        } else {
-          promise(true, [info]);
-        }
+        authing = true;
+        self._ref.auth(authToken, function(err, info) {
 
-        if (typeof onComplete === 'function') {
-          nextTick(function() {
-            onComplete(err, info);
-          });
-        }
+          authing = false;
+          clearInterval(authIntervalId);
+          if (err !== null) {
+            promise(false, [err]);
+          } else {
+            promise(true, [info]);
+          }
 
-      }, onCancel);
+          if (typeof onComplete === 'function') {
+            nextTick(function() {
+              onComplete(err, info);
+            });
+          }
 
-    });
+        }, onCancel);
+
+      }
+
+    }, 1);
 
     return promise;
 
