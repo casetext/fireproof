@@ -596,7 +596,7 @@
    * @returns {Fireproof}
    */
   Fireproof.prototype.ref = function() {
-    return new Fireproof(this._ref());
+    return new Fireproof(this._ref.ref());
   };
 
   return Fireproof;
