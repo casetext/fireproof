@@ -454,6 +454,14 @@
 
     var promise = pinkySwear();
 
+    if (typeof callback !== 'function') {
+      callback = function() {};
+    }
+
+    if (typeof cancelCallback !== 'function') {
+      cancelCallback = function() {};
+    }
+
     var callbackHandler = function(snap, prev) {
 
       nextTick(function() {
@@ -505,6 +513,14 @@
   Fireproof.prototype.once = function(eventType, successCallback, failureCallback, context) {
 
     var promise = pinkySwear();
+
+    if (typeof successCallback !== 'function') {
+      successCallback = function() {};
+    }
+
+    if (typeof failureCallback !== 'function') {
+      failureCallback = function() {};
+    }
 
     this._ref.once(eventType, function(snap) {
 
