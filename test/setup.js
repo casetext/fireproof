@@ -24,7 +24,10 @@ before(function(done) {
       process.env.FIREBASE_USER,
       process.env.FIREBASE_PASS
     )
+    .delay(500)
     .then(function(instance) {
+
+
       global.__bootstrappedFirebase = instance;
       console.log('bootstrapped instance', instance.toString(), 'for tests');
       global.firebase = new Firebase(instance.toString());

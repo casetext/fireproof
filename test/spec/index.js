@@ -1,7 +1,10 @@
 
 'use strict';
 
-var Fireproof = require('../../index');
+var Fireproof = require('../../index').Fireproof,
+  Q = require('kew');
+
+Fireproof.bless(Q);
 
 describe('Fireproof', function() {
 
@@ -12,12 +15,6 @@ describe('Fireproof', function() {
   });
 
   describe('#auth', function() {
-
-    it('promises to call Firebase#auth', function() {
-
-      expect(fireproof.auth('foo')).to.be.a('function');
-
-    });
 
     it('resolves on successful Firebase#auth', function() {
 
@@ -105,12 +102,16 @@ describe('Fireproof', function() {
     it('promises to set the object to the given value', function() {
 
       var didSet;
-      return expect(fireproof.child('test').set(true, function(err) {
-        didSet = (err === null);
-      })
-      .then(function() {
-        expect(didSet).to.equal(true);
-      })).to.be.fulfilled;
+      return expect(
+        fireproof.child('test')
+        .set(true, function(err) {
+          didSet = (err === null);
+        })
+        .delay(10)
+        .then(function() {
+          expect(didSet).to.equal(true);
+        }))
+      .to.be.fulfilled;
 
     });
 
@@ -121,9 +122,11 @@ describe('Fireproof', function() {
     it('promises to update the object to the given value', function() {
 
       var didUpdate;
-      return expect(fireproof.child('thing').update({ 'foo': 'bar' }, function(err) {
+      return expect(fireproof.child('thing')
+      .update({ 'foo': 'bar' }, function(err) {
         didUpdate = (err === null);
       })
+      .delay(10)
       .then(function() {
         expect(didUpdate).to.equal(true);
       })).to.be.fulfilled;
@@ -140,6 +143,7 @@ describe('Fireproof', function() {
       return expect(fireproof.remove(function(err) {
         didRemove = (err === null);
       })
+      .delay(10)
       .then(function() {
         expect(didRemove).to.equal(true);
       })).to.be.fulfilled;
@@ -153,7 +157,9 @@ describe('Fireproof', function() {
     it('returns a Fireproof that promises to add the new child', function() {
 
       var didPush;
-      var newProof = fireproof.child('list').push({
+
+      var newProof = fireproof.child('list')
+      .push({
         'foo': 'bar'
       }, function(err) {
         didPush = (err === null);
@@ -161,9 +167,16 @@ describe('Fireproof', function() {
 
       expect(newProof.constructor.name).to.equal('Fireproof');
 
-      return expect(newProof.then(function() {
+      var testPromise = Q.resolve()
+      .then(function() {
+        return newProof;
+      })
+      .delay(50)
+      .then(function() {
         expect(didPush).to.equal(true);
-      })).to.be.fulfilled;
+      });
+
+      return expect(testPromise).to.be.fulfilled;
 
     });
 
@@ -174,9 +187,11 @@ describe('Fireproof', function() {
     it('promises to set the ref to the given value and priority', function() {
 
       var didSet;
-      return expect(fireproof.child('test').setWithPriority(true, 0, function(err) {
+      return expect(fireproof.child('test')
+      .setWithPriority(true, 0, function(err) {
         didSet = (err === null);
       })
+      .delay(50)
       .then(function() {
         expect(didSet).to.equal(true);
       })).to.be.fulfilled;
@@ -191,9 +206,11 @@ describe('Fireproof', function() {
 
       var didSet;
 
-      return expect(fireproof.child('test').setPriority(1, function(err) {
+      return expect(fireproof.child('test')
+      .setPriority(1, function(err) {
         didSet = (err === null);
       })
+      .delay(50)
       .then(function() {
         expect(didSet).to.equal(true);
       })).to.be.fulfilled;
@@ -206,7 +223,7 @@ describe('Fireproof', function() {
 
     it('promises to run the transaction', function() {
 
-
+      // FIXME(goldibex): test this
 
     });
 
@@ -242,7 +259,7 @@ describe('Fireproof', function() {
 
     it('rejects if access is denied to the given ref', function() {
 
-
+      // FIXME(goldibex): test this
 
     });
 

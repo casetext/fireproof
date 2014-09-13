@@ -7,9 +7,9 @@
     "test": "mocha test/setup test/spec",
     "postpublish": "./script/postpublish.bash"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "http://github.com/casetext/fireproof.git"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/casetext/fireproof.git"
   },
   "author": "Harry Schmidt <goldibex@casetext.com>",
   "license": "ISC",
@@ -20,6 +20,7 @@
     "firebase-admin": "^1.0.7",
     "chai-as-promised": "^4.1.1",
     "jsdoc": "^3.3.0-alpha9",
-    "ink-docstrap": "^0.4.12"
+    "ink-docstrap": "^0.4.12",
+    "kew": "^0.4.0"
   }
 }
