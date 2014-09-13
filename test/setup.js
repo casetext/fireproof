@@ -1,8 +1,8 @@
 
 'use strict';
 
-var Firebase = require('firebase');
-var chai = require('chai');
+var Firebase = require('firebase'),
+  chai = require('chai');
 
 chai.use(require('chai-as-promised'));
 global.expect = require('chai').expect;

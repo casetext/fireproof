@@ -4,7 +4,7 @@
   "description": "Promises for Firebase objects.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/setup test/spec",
+    "test": "mocha --recursive test/setup test/spec",
     "postpublish": "./script/postpublish.bash"
   },
   "repository": {
