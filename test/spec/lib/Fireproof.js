@@ -18,15 +18,11 @@ describe('Fireproof', function() {
   describe('#auth', function() {
 
     it('resolves on successful Firebase#auth', function() {
-
       return expect(fireproof.auth(firebaseAuthSecret)).to.be.fulfilled;
-
     });
 
     it('rejects with error on unsuccessful Firebase#auth', function() {
-
       return expect(fireproof.auth('invalid')).to.be.rejected;
-
     });
 
   });
@@ -42,6 +38,7 @@ describe('Fireproof', function() {
     });
 
     it('hands back a snapshot of the ref by default', function(done) {
+
       fireproof.child('thentest').then(function(snap) {
         console.log('got the result!');
         expect(snap.val()).to.equal(true);
@@ -50,6 +47,7 @@ describe('Fireproof', function() {
         console.log('got an error!');
         done();
       });
+
     });
 
   });
@@ -58,8 +56,10 @@ describe('Fireproof', function() {
   describe('#child', function() {
 
     it('returns a Fireproof to the named child of the parent', function() {
+
       expect(fireproof.child('foo')).to.be.an.instanceof(Fireproof);
       expect(fireproof.child('foo').toString()).to.match(/foo$/);
+
     });
 
   });

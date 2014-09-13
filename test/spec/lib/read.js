@@ -8,7 +8,7 @@ var Fireproof = require('../../../index').Fireproof,
 Fireproof.bless(Q);
 
 
-describe('Fireproof', function() {
+describe('Read operation', function() {
 
   var fireproof;
 
