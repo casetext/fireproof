@@ -7,20 +7,36 @@ var Fireproof = require('../../../index').Fireproof,
 
 Fireproof.bless(Q);
 
+var fireproof;
 
 describe('Read operation', function() {
 
-  var fireproof;
-
-  beforeEach(function() {
-    fireproof = new Fireproof(firebase);
-  });
-
   describe('#transaction', function() {
+
+    before(function() {
+
+      fireproof = new Fireproof(firebase);
+
+      // FIXME(goldibex): test this
+      return fireproof
+      .child('transactiontest')
+      .set(true);
+
+    });
 
     it('promises to run the transaction', function() {
 
-      // FIXME(goldibex): test this
+      return fireproof.child('transactiontest')
+      .transaction(function() {
+        return 5;
+      })
+      .then(function(result) {
+
+        expect(result.committed).to.equal(true);
+        expect(result.snapshot.constructor.name).to.equal('FireproofSnapshot');
+        expect(result.snapshot.val()).to.equal(5);
+
+      });
 
     });
 
@@ -30,12 +46,17 @@ describe('Read operation', function() {
 
     before(function() {
 
-      return fireproof.child('onTest/foo')
-      .setWithPriority('bar', 3)
-      .then(function() {
-        return fireproof.child('onTest/baz')
-        .setWithPriority('quux', 5);
-      });
+      fireproof = new Fireproof(firebase);
+
+      return Q.all([
+
+        fireproof.child('onTest/foo')
+        .setWithPriority('bar', 3),
+
+        fireproof.child('onTest/baz')
+        .setWithPriority('quux', 5)
+
+      ]);
 
     });
 
@@ -67,6 +88,8 @@ describe('Read operation', function() {
   describe('#once', function() {
 
     before(function() {
+
+      fireproof = new Fireproof(firebase);
 
       return fireproof.child('onceTest/foo')
       .setWithPriority('bar', 3)
