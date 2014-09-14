@@ -1,8 +1,8 @@
 
 'use strict';
 
-var Firebase = require('firebase');
-var chai = require('chai');
+var Firebase = require('firebase'),
+  chai = require('chai');
 
 chai.use(require('chai-as-promised'));
 global.expect = require('chai').expect;
@@ -24,12 +24,15 @@ before(function(done) {
       process.env.FIREBASE_USER,
       process.env.FIREBASE_PASS
     )
+    .delay(1000)
     .then(function(instance) {
+
       global.__bootstrappedFirebase = instance;
       console.log('bootstrapped instance', instance.toString(), 'for tests');
       global.firebase = new Firebase(instance.toString());
       global.firebaseUrl = instance.toString();
       return instance.getAuthTokens();
+
     })
     .then(function(tokens) {
       global.firebaseAuthSecret = tokens[0];
