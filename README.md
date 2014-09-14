@@ -16,6 +16,8 @@ See the API documentation [here.](https://casetext.github.io/fireproof)
 
 The bottom line is this: all Firebase methods are reproduced on a Fireproof object.
 
+You have to "bless" Fireproof with a promise library that follows the deferral model. Q.js, Kew, and Firebase $q are some examples. Just call Fireproof.bless(Q). 
+
 - If the corresponding Firebase method has no return value but does something asynchronously, Fireproof returns a promise that fulfills if the interaction succeeds and rejects if an error occurs. This is true of, e.g., ```transaction()```, ```auth()```, ```set()```, ```update()```, ```remove()```, and ```once()```.
 
 - For ```on()```, Firebase returns the callback method that you passed in. Fireproof returns your _wrapped_ callback method with an extra method, ```then()```, attached. So the callback is effectively a promise!
@@ -45,8 +47,4 @@ fireproof.auth('my_auth_token').then(function() {
 ## Support
 
 IE back to 8.
-
-## Other
-
-To provide promises with very little code, Fireproof uses [PinkySwear.js](https://github.com/timjansen/PinkySwear.js).
 
