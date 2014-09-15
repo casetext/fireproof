@@ -1,7 +1,7 @@
 
 'use strict';
 
-var Fireproof = require('../../../index').Fireproof,
+var Fireproof = require('../../../index'),
   Firebase = require('firebase'),
   Q = require('kew');
 

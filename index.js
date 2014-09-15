@@ -7,7 +7,6 @@ require('./lib/read')(Fireproof);
 require('./lib/write')(Fireproof);
 require('./lib/onDisconnect')(Fireproof);
 
-module.exports = {
-  Fireproof: Fireproof,
-  FireproofSimpleLogin: require('./lib/FireproofSimpleLogin')
-};
+Fireproof.FireproofSimpleLogin = require('./lib/FireproofSimpleLogin');
+
+module.exports = Fireproof;
