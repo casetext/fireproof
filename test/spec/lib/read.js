@@ -2,7 +2,7 @@
 'use strict';
 
 
-var Fireproof = require('../../../index').Fireproof,
+var Fireproof = require('../../../index'),
   Q = require('kew');
 
 Fireproof.bless(Q);
