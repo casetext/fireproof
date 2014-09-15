@@ -67,6 +67,7 @@ describe('FireproofSnapshot', function() {
       return fireproof.child('snapTest')
       .then(function(snap) {
         expect(snap.ref().constructor.name).to.equal('Fireproof');
+        expect(snap.ref().transaction).to.be.a('function');
       });
 
     });
