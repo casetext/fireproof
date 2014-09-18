@@ -18,12 +18,10 @@ before(function(done) {
     global.firebaseAuthSecret = process.env.FIREBASE_TEST_SECRET;
     done();
 
-  } else {
+  } else if (process.env.FIREBASE_ADMIN_TOKEN) {
 
-    require('firebase-admin').bootstrapInstance(
-      process.env.FIREBASE_USER,
-      process.env.FIREBASE_PASS
-    )
+    require('firebase-admin')
+    .bootstrapInstance(process.env.FIREBASE_ADMIN_TOKEN)
     .delay(1000)
     .then(function(instance) {
 
@@ -38,6 +36,8 @@ before(function(done) {
       global.firebaseAuthSecret = tokens[0];
     }).done(done);
 
+  } else {
+    throw new Error('no way to run tests');
   }
 
 });
