@@ -1,6 +1,6 @@
 {
   "name": "fireproof",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Promises for Firebase objects.",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "firebase": "^1.0.19",
     "chai": "^1.9.1",
     "mocha": "^1.21.4",
-    "firebase-admin": "^1.0.7",
+    "firebase-admin": "^2.0.1",
     "chai-as-promised": "^4.1.1",
     "jsdoc": "^3.3.0-alpha9",
     "ink-docstrap": "^0.4.12",
