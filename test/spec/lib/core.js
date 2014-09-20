@@ -89,6 +89,15 @@ describe('Fireproof', function() {
   });
 
 
+  describe('#toFirebase', function() {
+
+    it('hands back the original Firebase reference', function() {
+      expect(fireproof.toFirebase().constructor.name).to.equal('D');
+    });
+
+  });
+
+
   describe('#name', function() {
 
     it('returns null for a top-level reference', function() {
