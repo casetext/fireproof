@@ -81,14 +81,12 @@ describe('write operation', function() {
         'foo': 'bar'
       }, function(err) {
         didPush = (err === null);
+      })
+      .then(function(obj) {
+        console.log(obj);
       });
 
-      expect(newProof.constructor.name).to.equal('Fireproof');
-
-      var testPromise = Q.resolve()
-      .then(function() {
-        return newProof;
-      })
+      var testPromise = Q.resolve(newProof)
       .delay(50)
       .then(function() {
         expect(didPush).to.equal(true);
