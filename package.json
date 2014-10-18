@@ -14,7 +14,7 @@
   "author": "Harry Schmidt <goldibex@casetext.com>",
   "license": "ISC",
   "devDependencies": {
-    "firebase": "^1.0.19",
+    "firebase": "^1.1.2",
     "chai": "^1.9.1",
     "mocha": "^1.21.4",
     "firebase-admin": "^2.0.1",
