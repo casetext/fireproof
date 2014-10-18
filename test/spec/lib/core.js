@@ -15,25 +15,11 @@ describe('Fireproof', function() {
     fireproof = new Fireproof(firebase);
   });
 
-  describe('#auth', function() {
-
-    it('resolves on successful Firebase#auth', function() {
-      return expect(fireproof.auth(firebaseAuthSecret)).to.be.fulfilled;
-    });
-
-    it('rejects with error on unsuccessful Firebase#auth', function() {
-      return expect(fireproof.auth('invalid')).to.be.rejected;
-    });
-
-  });
-
-
-  // #unauth is untestable -- it just calls out to Firebase
-
 
   describe('#then', function() {
 
     before(function() {
+      fireproof = new Fireproof(firebase);
       return fireproof.child('thentest').set(true);
     });
 
@@ -92,7 +78,7 @@ describe('Fireproof', function() {
   describe('#toFirebase', function() {
 
     it('hands back the original Firebase reference', function() {
-      expect(fireproof.toFirebase().constructor.name).to.equal('D');
+      expect(fireproof.toFirebase().constructor.name).to.equal('F');
     });
 
   });
