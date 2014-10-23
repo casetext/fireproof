@@ -1,6 +1,6 @@
 {
   "name": "fireproof",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Promises for Firebase objects.",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "author": "Harry Schmidt <goldibex@casetext.com>",
   "license": "ISC",
   "devDependencies": {
-    "firebase": "^1.2.0-beta.2",
+    "firebase": "^1.1.2",
     "chai": "^1.9.2",
     "mocha": "^1.21.5",
     "firebase-admin": "^2.0.1",
