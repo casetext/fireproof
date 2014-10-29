@@ -46,5 +46,5 @@ fireproof.auth('my_auth_token').then(function() {
 
 ## Support
 
-IE back to 8.
+IE back to 9.
 

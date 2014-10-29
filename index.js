@@ -2,6 +2,7 @@
 'use strict';
 
 var Fireproof = require('./lib/core');
+require('./lib/stats')(Fireproof);
 require('./lib/snapshot')(Fireproof);
 require('./lib/query')(Fireproof);
 require('./lib/read')(Fireproof);

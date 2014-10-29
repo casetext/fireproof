@@ -48,7 +48,11 @@ after(function() {
 
   // tear down the Firebase, if we created it
   if (global.__bootstrappedFirebase) {
-    return global.__bootstrappedFirebase.tearDown();
+    console.log('Tearing down Firebase', global.__bootstrappedFirebase.toString());
+    return global.__bootstrappedFirebase.tearDown()
+    .then(function() {
+      console.log('Done!');
+    });
   }
 
 });
