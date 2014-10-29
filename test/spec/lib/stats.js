@@ -34,16 +34,24 @@ describe('Stats', function() {
 
     before(function() {
 
+      this.timeout(5000);
+
       return Q.all([
         statsRef.child('a').set(true),
         statsRef.child('b').set(true),
         statsRef.child('b2').remove(),
-        statsRef.child('c').update({ foo: 'bar '})
-      ])
-      .then(function() {
-        return statsRef.child('a').once('value', function() {});
-      });
+        statsRef.child('c').update({ foo: 'bar '}),
+        statsRef.child('x').on('value', function() {}).then(function() {}),
+        statsRef.child('y').on('value', function() {}).then(function() {}),
+        statsRef.child('z').on('value', function() {}).then(function() {})
+      ]);
 
+    });
+
+    after(function() {
+      statsRef.child('a').off('value');
+      statsRef.child('b').off('value');
+      statsRef.child('c').off('value');
     });
 
     describe('#getCounts', function() {
@@ -52,7 +60,7 @@ describe('Stats', function() {
 
         var stats = Fireproof.stats.getCounts();
         expect(stats).to.deep.equal({
-          read: 1,
+          read: 3,
           write: 3,
           update: 1
         });
@@ -80,10 +88,15 @@ describe('Stats', function() {
 
         }, {});
 
+        console.log(pathStats);
+        console.log(correctedPathStats);
+
         expect(correctedPathStats).to.deep.equal({
 
           read: {
-            '/statsRef/a': 1
+            '/statsRef/x': 1,
+            '/statsRef/y': 1,
+            '/statsRef/z': 1
           },
           write: {
             '/statsRef/a': 1,
@@ -96,6 +109,37 @@ describe('Stats', function() {
 
         });
 
+      });
+
+    });
+
+    describe('#getListeners', function() {
+
+      it('returns an object counting the current listeners by path', function() {
+
+        var listeners = Fireproof.stats.getListeners();
+        var correctedPathListeners = Object.keys(listeners)
+        .reduce(function(acc, path) {
+
+          acc[url.parse(path).pathname] = listeners[path];
+          return acc;
+
+        }, {});
+
+        expect(correctedPathListeners).to.deep.equal({
+          '/statsRef/x': 1,
+          '/statsRef/y': 1,
+          '/statsRef/z': 1
+        });
+
+      });
+
+    });
+
+    describe('#getListenerCount', function() {
+
+      it('returns the total number of current listeners', function() {
+        expect(Fireproof.stats.getListenerCount()).to.equal(3);
       });
 
     });
