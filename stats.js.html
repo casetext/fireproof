@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>DocStrap Index</title>
+	<title>DocStrap Source: stats.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -42,69 +42,104 @@
 	<div class="row-fluid">
 
 		
-		<div class="span8">
-			
+			<div class="span12">
+				
 				<div id="main">
 					
 
 
-	
-	<span class="page-title">Index</span>
-	
-	
+		<h1 class="page-title">Source: stats.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">
+'use strict';
 
+module.exports = function(Fireproof) {
 
+  Fireproof.stats = {};
 
+  /**
+   * Resets the count of Firebase operations back to 0.
+   * @method Fireproof.stats.reset
+   */
+  Fireproof.stats.reset = function() {
 
+    Fireproof.stats.events = {
 
+      read: [],
+      write: [],
+      update: []
 
+    };
 
+  };
 
+  /**
+   * Records a Firebase operation.
+   * @private
+   * @method Fireproof.stats._record
+   * @param {String} kind The kind of event (read, write, or update).
+   * @param {String} path The Firebase path to the event.
+   */
+  Fireproof.stats._record = function(name, path) {
+    Fireproof.stats.events[name].push({ path: path, time: Date.now() });
+  };
 
+  /**
+   * Gets the per-operation, per-path counts of Firebase operations.
+   * @returns {Object} An object with three keys: "read", "write",
+   * and "update". Each key has an object value, of which the keys are Firebase
+   * paths and the values are counts.
+   */
+  Fireproof.stats.getPathCounts = function() {
 
+    return Object.keys(Fireproof.stats.events)
+    .reduce(function(result, statName) {
 
+      result[statName] = Fireproof.stats.events[statName]
+      .reduce(function(acc, datum) {
 
-	
-	
+        if (acc[datum.path]) {
+          acc[datum.path]++;
+        } else {
+          acc[datum.path] = 1;
+        }
 
+        return acc;
 
+      }, {});
 
+      return result;
 
+    }, {});
 
-    <section class="readme-section">
-        <article><h1>fireproof</h1><p>Firebase runs hot! Don't burn yourself with callbacks. Use promises instead.
-Fireproof wraps Firebase objects with lightweight promise support.</p>
-<h2>Installation</h2><pre class="prettyprint source lang-bash"><code>npm install --save fireproof</code></pre><h2>Usage</h2><p>See the API documentation <a href="https://casetext.github.io/fireproof">here.</a></p>
-<p>The bottom line is this: all Firebase methods are reproduced on a Fireproof object.</p>
-<p>You have to &quot;bless&quot; Fireproof with a promise library that follows the deferral model. Q.js, Kew, and Firebase $q are some examples. Just call Fireproof.bless(Q). </p>
-<ul>
-<li><p>If the corresponding Firebase method has no return value but does something asynchronously, Fireproof returns a promise that fulfills if the interaction succeeds and rejects if an error occurs. This is true of, e.g., <code>transaction()</code>, <code>auth()</code>, <code>set()</code>, <code>update()</code>, <code>remove()</code>, and <code>once()</code>.</p>
-</li>
-<li><p>For <code>on()</code>, Firebase returns the callback method that you passed in. Fireproof returns your <em>wrapped</em> callback method with an extra method, <code>then()</code>, attached. So the callback is effectively a promise!</p>
-</li>
-<li><p>For <code>push()</code>, Firebase returns the reference to the new child. Fireproof does the same, but the reference is also a promise that resolves if the push
-succeeds and rejects if the push fails.</p>
-</li>
-<li><p>All Fireproof objects are themselves promises. Except for the case of
-<code>push()</code> mentioned above, their then() is a shortcut for
-<code>fp.once('value')</code>. This means you can get the value of any Fireproof object
-at any time just by treating it as a promise!</p>
-</li>
-</ul>
-<pre class="prettyprint source lang-javascript"><code>var Fireproof = require('fireproof'),
-  Firebase = require('firebase');
+  };
 
-var fb = new Firebase('https://test.firebaseio.com/thing'),
-  fp = new Fireproof(fb);
+  /**
+   * Gets the per-operation counts of Firebase operations.
+   * @returns {Object} An object with four keys: "read", "write", and
+   * "update". The values are the counts of operations under those headings.
+   */
+  Fireproof.stats.getCounts = function() {
 
-fireproof.auth('my_auth_token').then(function() {
-  console.log('Successfully authenticated.')
-}, function(err) {
-  console.error('Error authenticating to Firebase!');
-})</code></pre><h2>Support</h2><p>IE back to 9.</p></article>
-    </section>
+    return Object.keys(Fireproof.stats.events)
+    .reduce(function(result, statName) {
 
+      result[statName] = Fireproof.stats.events[statName].length;
+      return result;
 
+    }, {});
+
+  };
+
+  Fireproof.stats.reset();
+
+};
+</pre>
+	</article>
+</section>
 
 
 
@@ -129,10 +164,6 @@ fireproof.auth('my_auth_token').then(function() {
 				</footer>
 			</div>
 
-			
-			<div class="span3">
-				<div id="toc"></div>
-			</div>
 			
 			<br clear="both">
 		</div>
