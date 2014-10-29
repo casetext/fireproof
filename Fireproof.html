@@ -1042,6 +1042,230 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
         
             
 <dt>
+    <h4 class="name" id="authWithOAuthPopup"><span class="type-signature"></span>authWithOAuthPopup<span class="signature">(provider, <span class="optional">onComplete</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Delegates Firebase#authWithOAuthPopup.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>provider</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>onComplete</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="auth.js.html">auth.js</a>,
+				 <a href="auth.js.html#sunlight-1-line-73">line 73</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>that resolves on auth success and rejects on auth failure.</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Promise</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="authWithOAuthPopup"><span class="type-signature"></span>authWithOAuthPopup<span class="signature">(provider, credentials, <span class="optional">onComplete</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
     
@@ -1245,230 +1469,6 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
 			<li>
 				<a href="auth.js.html">auth.js</a>,
 				 <a href="auth.js.html#sunlight-1-line-111">line 111</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>that resolves on auth success and rejects on auth failure.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">Promise</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="authWithOAuthPopup"><span class="type-signature"></span>authWithOAuthPopup<span class="signature">(provider, <span class="optional">onComplete</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Delegates Firebase#authWithOAuthPopup.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>provider</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>onComplete</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="auth.js.html">auth.js</a>,
-				 <a href="auth.js.html#sunlight-1-line-73">line 73</a>
 			</li>
 		</ul>
 	</dd>
@@ -2107,7 +2107,7 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
 		<ul class="dummy">
 			<li>
 				<a href="user.js.html">user.js</a>,
-				 <a href="user.js.html#sunlight-1-line-21">line 21</a>
+				 <a href="user.js.html#sunlight-1-line-51">line 51</a>
 			</li>
 		</ul>
 	</dd>
@@ -2443,7 +2443,7 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
 		<ul class="dummy">
 			<li>
 				<a href="user.js.html">user.js</a>,
-				 <a href="user.js.html#sunlight-1-line-51">line 51</a>
+				 <a href="user.js.html#sunlight-1-line-21">line 21</a>
 			</li>
 		</ul>
 	</dd>
@@ -3636,7 +3636,7 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
 		<ul class="dummy">
 			<li>
 				<a href="read.js.html">read.js</a>,
-				 <a href="read.js.html#sunlight-1-line-112">line 112</a>
+				 <a href="read.js.html#sunlight-1-line-119">line 119</a>
 			</li>
 		</ul>
 	</dd>
@@ -4036,7 +4036,7 @@ fp.then(function(snap) { console.log(snap.val()); });</pre>
 		<ul class="dummy">
 			<li>
 				<a href="read.js.html">read.js</a>,
-				 <a href="read.js.html#sunlight-1-line-50">line 50</a>
+				 <a href="read.js.html#sunlight-1-line-52">line 52</a>
 			</li>
 		</ul>
 	</dd>
@@ -4461,7 +4461,7 @@ functions as a promise that resolves on success and rejects on failure.</p>
 		<ul class="dummy">
 			<li>
 				<a href="read.js.html">read.js</a>,
-				 <a href="read.js.html#sunlight-1-line-124">line 124</a>
+				 <a href="read.js.html#sunlight-1-line-134">line 134</a>
 			</li>
 		</ul>
 	</dd>
@@ -6726,7 +6726,7 @@ functions as a promise that resolves on success and rejects on failure.</p>
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
-		on Tue Oct 28th 2014 using the <a
+		on Wed Oct 29th 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
