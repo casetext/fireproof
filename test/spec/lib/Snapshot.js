@@ -17,6 +17,8 @@ describe('FireproofSnapshot', function() {
 
     before(function() {
 
+      this.timeout(5000);
+
       fireproof = new Fireproof(firebase);
 
       return fireproof.child('snapTest')
