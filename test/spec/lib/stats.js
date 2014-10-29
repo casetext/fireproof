@@ -22,9 +22,11 @@ describe('Stats', function() {
     it('resets all captured statistics to 0', function() {
 
       Fireproof.stats.reset();
+      Fireproof.stats.resetListeners();
       expect(Fireproof.stats.events.read.length).to.equal(0);
       expect(Fireproof.stats.events.write.length).to.equal(0);
       expect(Fireproof.stats.events.update.length).to.equal(0);
+      expect(Object.keys(Fireproof.stats.listeners).length).to.equal(0);
 
     });
 
@@ -87,9 +89,6 @@ describe('Stats', function() {
           return acc;
 
         }, {});
-
-        console.log(pathStats);
-        console.log(correctedPathStats);
 
         expect(correctedPathStats).to.deep.equal({
 
