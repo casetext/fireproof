@@ -63,6 +63,7 @@ module.exports = function(Fireproof) {
   /**
    * Resets the count of Firebase operations back to 0.
    * @method Fireproof.stats.reset
+   * @method Fireproof.stats.reset
    */
   Fireproof.stats.reset = function() {
 
@@ -89,6 +90,7 @@ module.exports = function(Fireproof) {
 
   /**
    * Gets the per-operation, per-path counts of Firebase operations.
+   * @method Fireproof.stats.getPathCounts
    * @returns {Object} An object with three keys: "read", "write",
    * and "update". Each key has an object value, of which the keys are Firebase
    * paths and the values are counts.
@@ -119,6 +121,7 @@ module.exports = function(Fireproof) {
 
   /**
    * Gets the per-operation counts of Firebase operations.
+   * @methods Fireproof.stats.getCounts
    * @returns {Object} An object with four keys: "read", "write", and
    * "update". The values are the counts of operations under those headings.
    */
