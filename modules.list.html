@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>DocStrap Source: user.js</title>
+	<title>DocStrap Modules</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -56,86 +56,92 @@
 	<div class="row-fluid">
 
 		
-			<div class="span12">
-				
+		<div class="span8">
+			
 				<div id="main">
 					
 
 
-		<h1 class="page-title">Source: user.js</h1>
-    
+	<h1 class="page-title">Modules</h1>
 <section>
-	<article>
-		<pre
-			class="sunlight-highlight-javascript linenums">
-'use strict';
 
-module.exports = function(Fireproof) {
+<header>
+    <h2>
+    
+    </h2>
+    
+</header>
 
-  /**
-   * Delegates Firebase#createUser.
-   * @method Fireproof#createUser
-   * @param {Object} credentials
-   * @param {Function} [onComplete]
-   */
-  Fireproof.prototype.createUser = function(credentials, onComplete) {
+<article>
+    <div class="container-overview">
+    
 
-    var oc = Fireproof._handleError(onComplete);
-    this._ref.createUser(credentials, oc);
-    return oc.promise;
+    
+        
 
-  };
+        
+<dl class="details">
+	
 
+	
 
-  /**
-   * Delegates Firebase#changePassword.
-   * @method Fireproof#changePassword
-   * @param {Object} credentials
-   * @param {Function} [onComplete]
-   */
-  Fireproof.prototype.changePassword = function(credentials, onComplete) {
+	
 
-    var oc = Fireproof._handleError(onComplete);
-    this._ref.changePassword(credentials, oc);
-    return oc.promise;
+	
 
-  };
+	
 
+	
 
-  /**
-   * Delegates Firebase#resetPassword.
-   * @method Fireproof#resetPassword
-   * @param {Object} credentials
-   * @param {Function} [onComplete]
-   */
-  Fireproof.prototype.resetPassword = function(credentials, onComplete) {
+	
 
-    var oc = Fireproof._handleError(onComplete);
-    this._ref.resetPassword(credentials, oc);
-    return oc.promise;
+	
 
-  };
+	
 
 
-  /**
-   * Delegates Firebase#removeUser.
-   * @method Fireproof#removeUser
-   * @param {Object} credentials
-   * @param {Function} [onComplete]
-   */
-  Fireproof.prototype.removeUser = function(credentials, onComplete) {
 
-    var oc = Fireproof._handleError(onComplete);
-    this._ref.removeUser(credentials, oc);
-    return oc.promise;
+	
 
-  };
+	
 
-};
-</pre>
-	</article>
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Fireproof.html">Fireproof</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -159,6 +165,10 @@ module.exports = function(Fireproof) {
 				</footer>
 			</div>
 
+			
+			<div class="span3">
+				<div id="toc"></div>
+			</div>
 			
 			<br clear="both">
 		</div>
