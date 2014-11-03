@@ -9,6 +9,8 @@ var rmdir = require('rimraf'),
   bump = require('gulp-bump'),
   wrap = require('gulp-wrap'),
   jsdoc2md = require('gulp-jsdoc-to-markdown'),
+  filter = rquire('gulp-filter'),
+  tagVersion = require('gulp-tag-version'),
   version = require('./package.json').version;
 
 
@@ -25,6 +27,17 @@ function npmPublish(done) {
   };
 
 }
+function inc(importance) {
+
+  return gulp.src(['./package.json'])
+  .pipe(bump({type: importance}))
+  .pipe(gulp.dest('./'))
+  .pipe(git.commit('new release'))
+  .pipe(filter('package.json'))
+  .pipe(tagVersion())
+  .on('end', npmPublish(done));
+
+}
 
 
 gulp.task('clean', 'Remove all build files', function(done) {
@@ -32,7 +45,7 @@ gulp.task('clean', 'Remove all build files', function(done) {
 });
 
 
-gulp.task('build', 'Builds the Javascript for distribution.', function() {
+gulp.task('build', 'Builds the Javascript for distribution.', ['clean'], function() {
 
   return gulp.src(['index.js', 'lib/*.js'])
   .pipe(concat('fireproof.js'))
@@ -116,33 +129,19 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function() {
 
 });
 
+var bumpDeps = ['build', 'test', 'docs'];
 
-gulp.task('bump', 'Publishes a new bugfix version.', function(done) {
-
-  return gulp.src('./package.json')
-  .pipe(bump())
-  .pipe(gulp.dest('./'))
-  .on('end', npmPublish(done));
-
+gulp.task('bump', 'Publishes a new bugfix version.', bumpDeps, function(done) {
+  inc('patch', done);
 });
 
 
-gulp.task('bump:minor', 'Publishes a new bugfix version.', function(done) {
-
-  return gulp.src('./package.json')
-  .pipe(bump({ type: 'minor' }))
-  .pipe(gulp.dest('./'))
-  .on('end', npmPublish(done));
-
+gulp.task('bump:minor', 'Publishes a new bugfix version.', bumpDeps, function(done) {
+  inc('minor', done);
 });
 
 
-gulp.task('bump:major', 'Publishes a new bugfix version.', function(done) {
-
-  return gulp.src('./package.json')
-  .pipe(bump({ type: 'major' }))
-  .pipe(gulp.dest('./'))
-  .on('end', npmPublish(done));
-
+gulp.task('bump:major', 'Publishes a new bugfix version.', bumpDeps, function(done) {
+  inc('major', done);
 });
 
