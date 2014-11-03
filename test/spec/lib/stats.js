@@ -3,11 +3,8 @@
 'use strict';
 
 
-var Fireproof = require('../../../index'),
-  Q = require('kew'),
-  url = require('url');
-
-Fireproof.bless(Q);
+var url = require('url'),
+  Q = require('kew');
 
 describe('Stats', function() {
 

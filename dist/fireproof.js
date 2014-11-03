@@ -14,7 +14,7 @@
   }
 }(this, function () {
 
-
+  
 'use strict';
 
 /**
@@ -27,10 +27,8 @@
  * except for references created by .push(), where it resolves on success
  * and rejects on failure of the property object.
  * @example
- * ```js
  * var fp = new Fireproof(new Firebase('https://test.firebaseio.com/something'));
  * fp.then(function(snap) { console.log(snap.val()); });
- * ```
  */
 function Fireproof(firebaseRef, promise) {
 

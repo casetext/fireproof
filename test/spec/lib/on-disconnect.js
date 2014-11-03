@@ -1,13 +1,6 @@
 
 'use strict';
 
-var Fireproof = require('../../../index'),
-  Firebase = require('firebase'),
-  Q = require('kew');
-
-Fireproof.bless(Q);
-
-
 describe('onDisconnect', function() {
 
   var fireproof;

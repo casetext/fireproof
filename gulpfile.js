@@ -12,6 +12,21 @@ var rmdir = require('rimraf'),
   version = require('./package.json').version;
 
 
+function npmPublish(done) {
+
+  return function() {
+
+    var spawn = require('child_process').spawn;
+
+    spawn('npm', ['publish'], { stdio: 'inherit' })
+    .on('error', done)
+    .on('close', done);
+
+  };
+
+}
+
+
 gulp.task('clean', 'Remove all build files', function(done) {
   rmdir('./dist', done);
 });
@@ -27,7 +42,20 @@ gulp.task('build', 'Builds the Javascript for distribution.', function() {
 });
 
 
-gulp.task('test:setup', 'Set up tests.', function() {
+gulp.task('docs', 'Generates a new version of the docs.', ['build'], function() {
+
+  return gulp.src(['dist/fireproof.js'])
+  .pipe(jsdoc2md())
+  .pipe(rename(function(path) {
+    path.basename = 'api';
+    path.extname = '.md';
+  }))
+  .pipe(gulp.dest('./'));
+
+});
+
+
+gulp.task('test:setup', 'Set up tests.', ['build'], function() {
 
   if (!process.env.FIREBASE_ADMIN_TOKEN) {
     throw new Error('Please set FIREBASE_ADMIN_TOKEN to run the tests!');
@@ -51,12 +79,19 @@ gulp.task('test:setup', 'Set up tests.', function() {
 
   })
   .then(function(tokens) {
+
     global.firebaseAuthSecret = tokens[0];
+
+    // set up test environment.
+    global.Fireproof = require('./dist/fireproof');
+    global.Fireproof.bless(require('kew'));
+    global.Firebase = require('firebase');
+
   });
 
 });
 
-gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
+gulp.task('test', 'Runs tests and exits.', ['test:setup'], function() {
 
   var tearingDown = false;
   function teardown(e) {
@@ -74,7 +109,7 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
 
   }
 
-  gulp.src('./test/**/*.js', { read: false })
+  return gulp.src('./test/**/*.js', { read: false })
   .pipe(mocha())
   .on('error', teardown)
   .on('end', teardown);
@@ -82,52 +117,32 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
 });
 
 
-gulp.task('publish:npm', 'Runs "npm publish".', function(done) {
-
-  var spawn = require('child_process').spawn;
-
-  spawn('npm', ['publish'], { stdio: 'inherit' })
-  .on('error', done)
-  .on('close', done);
-
-});
-
-
-gulp.task('bump:patch', 'Publishes a new bugfix version.', function() {
+gulp.task('bump', 'Publishes a new bugfix version.', function(done) {
 
   return gulp.src('./package.json')
   .pipe(bump())
-  .pipe(gulp.dest('./'));
+  .pipe(gulp.dest('./'))
+  .on('end', npmPublish(done));
 
 });
 
 
-gulp.task('bump:minor', 'Publishes a new bugfix version.', function() {
+gulp.task('bump:minor', 'Publishes a new bugfix version.', function(done) {
 
   return gulp.src('./package.json')
   .pipe(bump({ type: 'minor' }))
-  .pipe(gulp.dest('./'));
+  .pipe(gulp.dest('./'))
+  .on('end', npmPublish(done));
 
 });
 
 
-gulp.task('bump:major', 'Publishes a new bugfix version.', function() {
+gulp.task('bump:major', 'Publishes a new bugfix version.', function(done) {
 
   return gulp.src('./package.json')
   .pipe(bump({ type: 'major' }))
-  .pipe(gulp.dest('./'));
+  .pipe(gulp.dest('./'))
+  .on('end', npmPublish(done));
 
 });
 
-
-gulp.task('docs', 'Generates a new version of the docs.', ['build'], function() {
-
-  return gulp.src(['dist/fireproof.js'])
-  .pipe(jsdoc2md())
-  .pipe(rename(function(path) {
-    path.basename = 'api';
-    path.extname = '.md';
-  }))
-  .pipe(gulp.dest('./'));
-
-});

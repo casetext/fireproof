@@ -1,12 +1,6 @@
 
 'use strict';
 
-var Fireproof = require('../../../index'),
-  Q = require('kew');
-
-Fireproof.bless(Q);
-
-
 describe('Fireproof', function() {
 
   var fireproof;
