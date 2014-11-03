@@ -28,6 +28,7 @@ function npmPublish(done) {
   };
 
 }
+
 function inc(importance, done) {
 
   return gulp.src(['./package.json'])
@@ -36,7 +37,9 @@ function inc(importance, done) {
   .pipe(git.commit('new release'))
   .pipe(filter('package.json'))
   .pipe(tagVersion())
-  .on('end', npmPublish(done));
+  .on('end', function() {
+    git.push(npmPublish(done));
+  });
 
 }
 
