@@ -38,7 +38,14 @@ function inc(importance, done) {
   .pipe(filter('package.json'))
   .pipe(tagVersion())
   .on('end', function() {
-    git.push(npmPublish(done));
+
+    git.push('origin', 'master', function(err) {
+      if (err) {
+        throw err;
+      }
+      npmPublish(done);
+    });
+
   });
 
 }
@@ -140,12 +147,12 @@ gulp.task('bump', 'Publishes a new bugfix version.', bumpDeps, function(done) {
 });
 
 
-gulp.task('bump:minor', 'Publishes a new bugfix version.', bumpDeps, function(done) {
+gulp.task('bump:minor', 'Publishes a new minor version.', bumpDeps, function(done) {
   inc('minor', done);
 });
 
 
-gulp.task('bump:major', 'Publishes a new bugfix version.', bumpDeps, function(done) {
+gulp.task('bump:major', 'Publishes a new major version.', bumpDeps, function(done) {
   inc('major', done);
 });
 

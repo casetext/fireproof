@@ -12,7 +12,7 @@ npm install --save fireproof
 
 ## Usage
 
-See the API documentation [here.](https://github.com/casetext/fireproof/blob/master/README.md)
+See the API documentation [here.](https://github.com/casetext/fireproof/blob/master/api.md)
 
 The bottom line is this: all Firebase methods are reproduced on a Fireproof object.
 
