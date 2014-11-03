@@ -437,12 +437,14 @@ Delegates Firebase#set.
 
 **Returns**: `Promise`  
 **Example**  
+```js
 fireproofRef.set('something')
 .then(function()) {
   console.log('set was successful!');
 }, function(err) {
   console.error('error while setting:', err);
 });
+```
 
 <a name="Fireproof#update"></a>
 ##fireproof.update(value, [onComplete])

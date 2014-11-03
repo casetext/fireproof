@@ -9,7 +9,8 @@ var rmdir = require('rimraf'),
   bump = require('gulp-bump'),
   wrap = require('gulp-wrap'),
   jsdoc2md = require('gulp-jsdoc-to-markdown'),
-  filter = rquire('gulp-filter'),
+  filter = require('gulp-filter'),
+  git = require('gulp-git'),
   tagVersion = require('gulp-tag-version'),
   version = require('./package.json').version;
 
@@ -27,7 +28,7 @@ function npmPublish(done) {
   };
 
 }
-function inc(importance) {
+function inc(importance, done) {
 
   return gulp.src(['./package.json'])
   .pipe(bump({type: importance}))
@@ -129,7 +130,7 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function() {
 
 });
 
-var bumpDeps = ['build', 'test', 'docs'];
+var bumpDeps = ['test'];
 
 gulp.task('bump', 'Publishes a new bugfix version.', bumpDeps, function(done) {
   inc('patch', done);
