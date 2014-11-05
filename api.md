@@ -54,6 +54,9 @@
     * [stats.getListenerCount()](#Fireproof.stats.getListenerCount)
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
+  * [class: Fireproof.Demux](#Fireproof.Demux)
+    * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+    * [demux.get(count)](#Fireproof.Demux#get)
 * [class: FireproofSnapshot](#FireproofSnapshot)
   * [new FireproofSnapshot(snap)](#new_FireproofSnapshot)
   * [fireproofSnapshot.child(path)](#FireproofSnapshot#child)
@@ -123,6 +126,9 @@
     * [stats.getListenerCount()](#Fireproof.stats.getListenerCount)
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
+  * [class: Fireproof.Demux](#Fireproof.Demux)
+    * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+    * [demux.get(count)](#Fireproof.Demux#get)
 
 <a name="new_Fireproof"></a>
 ##new Fireproof(firebaseRef)
@@ -546,6 +552,32 @@ Gets the per-operation counts of Firebase operations.
 
 **Returns**: `Object` - An object with three keys: "read", "write", and
 "update". The values are the counts of operations under those headings.  
+<a name="Fireproof.Demux"></a>
+##class: Fireproof.Demux
+**Members**
+
+* [class: Fireproof.Demux](#Fireproof.Demux)
+  * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+  * [demux.get(count)](#Fireproof.Demux#get)
+
+<a name="new_Fireproof.Demux"></a>
+###new Fireproof.Demux(refs)
+A helper object for retrieving sorted Firebase objects from multiple
+locations.
+
+**Params**
+
+- refs `Array` - a list of Fireproof object references to draw from.  
+
+<a name="Fireproof.Demux#get"></a>
+###demux.get(count)
+Get the next `count` items from the paths, ordered by priority.
+
+**Params**
+
+- count `Number` - The number of items to get from the list.  
+
+**Returns**: `Promise` - A promise that resolves with the next `count` items, ordered by priority.  
 <a name="FireproofSnapshot"></a>
 #class: FireproofSnapshot
 **Members**

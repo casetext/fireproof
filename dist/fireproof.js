@@ -423,8 +423,8 @@ Fireproof.prototype.unauth = function() {
 /**
  * A helper object for retrieving sorted Firebase objects from multiple
  * locations.
- * @constructor
- * @global
+ * @constructor Fireproof.Demux
+ * @static
  * @param {Array} refs a list of Fireproof object references to draw from.
  */
 function Demux(refs) {
@@ -459,7 +459,7 @@ function Demux(refs) {
 
 /**
  * Get the next `count` items from the paths, ordered by priority.
- * @method Demux#get
+ * @method Fireproof.Demux#get
  * @param {Number} count The number of items to get from the list.
  * @returns {Promise} A promise that resolves with the next `count` items, ordered by priority.
  */
