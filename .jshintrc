@@ -21,6 +21,7 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
+    "Demux": false,
     "Firebase": false,
     "Fireproof": false,
     "firebaseAuthSecret": false,

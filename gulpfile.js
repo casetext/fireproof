@@ -93,9 +93,8 @@ gulp.task('test:setup', 'Set up tests.', ['build'], function() {
 
   return require('firebase-admin')
   .bootstrapInstance(process.env.FIREBASE_ADMIN_TOKEN)
-  .delay(1000)
+  .delay(3000)
   .then(function(instance) {
-
     global.__bootstrappedFirebase = instance;
     console.log('Bootstrapped instance', instance.toString(), 'for tests');
     global.firebase = new Firebase(instance.toString());
