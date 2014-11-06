@@ -17,15 +17,11 @@ var rmdir = require('rimraf'),
 
 function npmPublish(done) {
 
-  return function() {
+  var spawn = require('child_process').spawn;
 
-    var spawn = require('child_process').spawn;
-
-    spawn('npm', ['publish'], { stdio: 'inherit' })
-    .on('error', done)
-    .on('close', done);
-
-  };
+  spawn('npm', ['publish'], { stdio: 'inherit' })
+  .on('error', done)
+  .on('close', done);
 
 }
 
