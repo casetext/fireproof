@@ -1,6 +1,6 @@
 {
   "name": "fireproof",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Promises for Firebase objects.",
   "main": "dist/fireproof.js",
   "scripts": {
