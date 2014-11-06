@@ -36,10 +36,13 @@ function inc(importance, done) {
   .on('end', function() {
 
     git.push('origin', 'master', function(err) {
+
       if (err) {
-        throw err;
+        done(err);
+      } else {
+        npmPublish(done);
       }
-      npmPublish(done);
+
     });
 
   });
