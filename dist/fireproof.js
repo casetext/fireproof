@@ -234,11 +234,21 @@ Fireproof.prototype.toFirebase = function() {
 
 /**
  * Delegates Firebase#name.
-* @method Fireproof#name
+ * @method Fireproof#name
  * @returns {string} The last component of this reference object's path.
  */
 Fireproof.prototype.name = function() {
   return this._ref.name();
+};
+
+
+/**
+ * Delegates Firebase#key.
+ * @method Fireproof#key
+ * @returns {string} The last component of this reference object's path.
+ */
+Fireproof.prototype.key = function() {
+  return this._ref.key();
 };
 
 
@@ -491,7 +501,7 @@ Demux.prototype.get = function(count) {
           self._positions[ref.ref().toString()].name || undefined);
 
         if (self._limit) {
-          return newRef.limit(count - self._buffer.length);
+          return newRef.limitToFirst(count - self._buffer.length);
         } else {
           return newRef;
         }
@@ -524,10 +534,10 @@ Demux.prototype._concatenateResults = function(resultLists) {
       var position = self._positions[listPath];
 
       // don't include an overlapping child
-      if (position.priority !== child.getPriority() || position.name !== child.name()) {
+      if (position.priority !== child.getPriority() || position.name !== child.key()) {
         acc.push(child);
         position.priority = child.getPriority();
-        position.name = child.name();
+        position.name = child.key();
       }
 
     });
@@ -542,8 +552,8 @@ Demux.prototype._concatenateResults = function(resultLists) {
     // See the Firebase docs for more information.
     var aPriority = a.getPriority(),
       bPriority = b.getPriority(),
-      aName = a.name(),
-      bName = b.name();
+      aName = a.key(),
+      bName = b.key();
 
     if (typeof aPriority === typeof bPriority) {
 
@@ -683,36 +693,36 @@ Fireproof.prototype.limit = function(limit) {
 /**
  * Delegates Firebase#startAt.
  * @method Fireproof#startAt
- * @param {object} priority
- * @param {string} name
+ * @param {string | number} value
+ * @param {string} key
  * @returns {Fireproof}
  */
-Fireproof.prototype.startAt = function(priority, name) {
-  return new Fireproof(this._ref.startAt(priority, name));
+Fireproof.prototype.startAt = function(value, key) {
+  return new Fireproof(this._ref.startAt(value, key));
 };
 
 
 /**
  * Delegates Firebase#endAt.
  * @method Fireproof#endAt
- * @param {object} priority
+ * @param {string | number} value
  * @param {string} name
  * @returns {Fireproof}
  */
-Fireproof.prototype.endAt = function(priority, name) {
-  return new Fireproof(this._ref.endAt(priority, name));
+Fireproof.prototype.endAt = function(value, key) {
+  return new Fireproof(this._ref.endAt(value, key));
 };
 
 
 /**
  * Delegates Firebase#equalTo.
  * @method Fireproof#equalTo
- * @param {object} priority
+ * @param {string | number} value
  * @param {string} name
  * @returns {Fireproof}
  */
-Fireproof.prototype.equalTo = function(priority, name) {
-  return new Fireproof(this._ref.equalTo(priority, name));
+Fireproof.prototype.equalTo = function(value, key) {
+  return new Fireproof(this._ref.equalTo(value, key));
 };
 
 
@@ -724,6 +734,78 @@ Fireproof.prototype.equalTo = function(priority, name) {
 Fireproof.prototype.ref = function() {
   return new Fireproof(this._ref.ref());
 };
+
+
+/**
+ * Delegates Firebase#orderByChild.
+ * @method Fireproof#orderByChild
+ * @param {string} child The child to order by.
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.orderByChild = function(child) {
+  return new Fireproof(this._ref.orderByChild(child));
+};
+
+
+/**
+ * Delegates Firebase#orderByKey.
+ * @method Fireproof#orderByKey
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.orderByKey = function() {
+  return new Fireproof(this._ref.orderByKey());
+};
+
+
+/**
+ * Delegates Firebase#orderByPriority.
+ * @method Fireproof#orderByPriority
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.orderByPriority = function() {
+  return new Fireproof(this._ref.orderByPriority());
+};
+
+
+/**
+ * Delegates Firebase#limitToFirst.
+ * @method Fireproof#limitToFirst
+ * @param {number} limit
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.limitToFirst = function(limit) {
+  return new Fireproof(this._ref.limitToFirst(limit));
+};
+
+
+/**
+ * Delegates Firebase#limitToLast.
+ * @method Fireproof#limitToLast
+ * @param {number} limit
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.limitToLast = function(limit) {
+  return new Fireproof(this._ref.limitToLast(limit));
+};
+
+
+/**
+ * Delegates Firebase#equalTo.
+ * @method Fireproof#equalTo
+ * @param {string | number | null} value
+ * @param {string} key
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.equalTo = function(value, key) {
+
+  if (key !== undefined) {
+    return new Fireproof(this._ref.equalTo(value, key));
+  } else {
+    return new Fireproof(this._ref.equalTo(value));
+  }
+
+};
+
 
 
 /**
@@ -987,6 +1069,16 @@ FireproofSnapshot.prototype.numChildren = function() {
  */
 FireproofSnapshot.prototype.name = function() {
   return this._snap.name();
+};
+
+
+/**
+ * Delegates DataSnapshot#key.
+ * @method FireproofSnapshot#key
+ * @returns {String} The last part of the snapshot's path.
+ */
+FireproofSnapshot.prototype.key = function() {
+  return this._snap.key();
 };
 
 

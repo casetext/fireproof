@@ -218,11 +218,21 @@ Fireproof.prototype.toFirebase = function() {
 
 /**
  * Delegates Firebase#name.
-* @method Fireproof#name
+ * @method Fireproof#name
  * @returns {string} The last component of this reference object's path.
  */
 Fireproof.prototype.name = function() {
   return this._ref.name();
+};
+
+
+/**
+ * Delegates Firebase#key.
+ * @method Fireproof#key
+ * @returns {string} The last component of this reference object's path.
+ */
+Fireproof.prototype.key = function() {
+  return this._ref.key();
 };
 
 
