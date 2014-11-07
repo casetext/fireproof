@@ -6,14 +6,14 @@ describe('Fireproof', function() {
   var fireproof;
 
   beforeEach(function() {
-    fireproof = new Fireproof(firebase);
+    fireproof = new Fireproof(root);
   });
 
 
   describe('#then', function() {
 
     before(function() {
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
       return fireproof.child('thentest').set(true);
     });
 

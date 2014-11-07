@@ -11,7 +11,7 @@ describe('Stats', function() {
   var statsRef;
 
   beforeEach(function() {
-    statsRef = new Fireproof(firebase).child('statsRef');
+    statsRef = new Fireproof(root).child('statsRef');
   });
 
   describe('#reset', function() {

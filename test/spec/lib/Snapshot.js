@@ -14,7 +14,7 @@ describe('FireproofSnapshot', function() {
 
       this.timeout(5000);
 
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
 
       return fireproof.child('snapTest')
       .set({
@@ -48,7 +48,7 @@ describe('FireproofSnapshot', function() {
 
     before(function() {
 
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
 
       return fireproof.child('snapTest')
       .set({

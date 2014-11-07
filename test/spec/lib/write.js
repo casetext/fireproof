@@ -8,7 +8,7 @@ describe('write operation', function() {
   var fireproof;
 
   beforeEach(function() {
-    fireproof = new Fireproof(firebase);
+    fireproof = new Fireproof(root);
   });
 
   describe('#set', function() {

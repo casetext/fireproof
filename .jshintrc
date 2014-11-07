@@ -25,7 +25,7 @@
     "Firebase": false,
     "Fireproof": false,
     "firebaseAuthSecret": false,
-    "firebase": false,
+    "root": false,
     "before": false,
     "after": false,
     "beforeEach": false,

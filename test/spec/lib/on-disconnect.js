@@ -6,7 +6,7 @@ describe('onDisconnect', function() {
   var fireproof;
 
   beforeEach(function() {
-    fireproof = new Fireproof(firebase);
+    fireproof = new Fireproof(root);
   });
 
 

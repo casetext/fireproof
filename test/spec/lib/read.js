@@ -11,7 +11,7 @@ describe('Read operation', function() {
 
     before(function() {
 
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
 
       // FIXME(goldibex): test this
       return fireproof
@@ -42,7 +42,7 @@ describe('Read operation', function() {
 
     before(function() {
 
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
 
       return Q.all([
 
@@ -85,7 +85,7 @@ describe('Read operation', function() {
 
     before(function() {
 
-      fireproof = new Fireproof(firebase);
+      fireproof = new Fireproof(root);
 
       return fireproof.child('onceTest/foo')
       .setWithPriority('bar', 3)

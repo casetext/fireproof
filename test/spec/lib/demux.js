@@ -5,7 +5,7 @@ var Q = require('kew');
 
 describe('Demux', function() {
 
-  var fireproof = new Fireproof(firebase);
+  var fireproof = new Fireproof(root);
 
   before(function() {
 
