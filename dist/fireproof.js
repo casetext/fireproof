@@ -442,9 +442,9 @@ function Demux(refs, limit) {
   this._refs = refs;
   this._positions = refs.reduce(function(positions, ref) {
 
-    positions[ref.toString()] = {
-      name: null,
-      priority: null
+    positions[ref.ref().toString()] = {
+      name: undefined,
+      priority: undefined
     };
 
     return positions;
@@ -487,8 +487,8 @@ Demux.prototype.get = function(count) {
       return Fireproof._checkQ().all(self._refs.map(function(ref) {
 
         var newRef = ref.startAt(
-          self._positions[ref.toString()].priority,
-          self._positions[ref.toString()].name || undefined);
+          self._positions[ref.ref().toString()].priority,
+          self._positions[ref.ref().toString()].name || undefined);
 
         if (self._limit) {
           return newRef.limit(count - self._buffer.length);
