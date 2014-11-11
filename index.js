@@ -46,10 +46,15 @@ Fireproof._checkQ = function() {
 };
 
 
+Fireproof._setNextTick = function(fn) {
+  Fireproof.__nextTick = fn;
+};
+
+
 Fireproof._nextTick = function(fn) {
 
-  if (process && process.nextTick) {
-    process.nextTick(fn);
+  if (Fireproof.__nextTick) {
+    Fireproof.__nextTick(fn);
   } else {
     setTimeout(fn, 0);
   }
