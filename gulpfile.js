@@ -80,61 +80,38 @@ gulp.task('docs', 'Generates a new version of the docs.', ['build'], function() 
 
 gulp.task('test:setup', 'Set up tests.', ['build'], function() {
 
-  if (!process.env.FIREBASE_ADMIN_TOKEN) {
-    throw new Error('Please set FIREBASE_ADMIN_TOKEN to run the tests!');
-  }
-
   var Firebase = require('firebase'),
     chai = require('chai');
 
   chai.use(require('chai-as-promised'));
   global.expect = require('chai').expect;
 
-  return require('firebase-admin')
-  .bootstrapInstance(process.env.FIREBASE_ADMIN_TOKEN)
-  .delay(3000)
-  .then(function(instance) {
-    global.__bootstrappedFirebase = instance;
-    console.log('Bootstrapped instance', instance.toString(), 'for tests');
-    global.firebase = new Firebase(instance.toString());
-    return instance.getAuthTokens();
+  global.Firebase = Firebase;
+  global.Fireproof = require('./dist/fireproof');
+  global.Fireproof.bless(require('kew'));
 
-  })
-  .then(function(tokens) {
-
-    global.firebaseAuthSecret = tokens[0];
-
-    // set up test environment.
-    global.Fireproof = require('./dist/fireproof');
-    global.Fireproof.bless(require('kew'));
-    global.Firebase = require('firebase');
-
-  });
+  global.firebase = new Firebase('https://' +
+    Math.random().toString(36).slice(2) +
+    '.firebaseio-demo.com');
 
 });
 
-gulp.task('test', 'Runs tests and exits.', ['test:setup'], function() {
+gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
 
-  var tearingDown = false;
-  function teardown(e) {
-
-    if (!tearingDown) {
-      tearingDown = true;
-
-      console.log('Tearing down Firebase', global.__bootstrappedFirebase.toString());
-      return global.__bootstrappedFirebase.tearDown()
-      .then(function() {
-        console.log('Done!');
-        process.exit(e ? 1 : 0);
-      });
-    }
-
-  }
-
-  return gulp.src('./test/**/*.js', { read: false })
+  gulp.src('./test/**/*.js', { read: false })
   .pipe(mocha())
-  .on('error', teardown)
-  .on('end', teardown);
+  .once('error', function(e) {
+    done(e);
+    setTimeout(function() {
+      process.exit(1);
+    }, 50);
+  })
+  .once('end', function() {
+    done();
+    setTimeout(function() {
+      process.exit(0);
+    }, 50);
+  });
 
 });
 
