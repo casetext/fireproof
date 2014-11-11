@@ -7,12 +7,12 @@
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
-    module.exports = factory();
+    module.exports = factory(global);
   } else {
     // Browser globals (root is window)
-    root.Fireproof = factory();
+    root.Fireproof = factory(root);
   }
-}(this, function () {
+}(this, function (root) {
 
   
 'use strict';
@@ -61,11 +61,24 @@ Fireproof._checkQ = function() {
 
 };
 
+/**
+ * Tell Fireproof to use a given function to set timeouts from now on.
+ * NB: If you are using AMD/require.js, you MUST call this function!
+ * @method Fireproof.setNextTick
+ * @param {Function} nextTick a function that takes a function and
+ * runs it in the immediate future.
+ */
+Fireproof.setNextTick = function(fn) {
+  Fireproof.__nextTick = fn;
+};
+
 
 Fireproof._nextTick = function(fn) {
 
-  if (process && process.nextTick) {
-    process.nextTick(fn);
+  if (Fireproof.__nextTick) {
+    Fireproof.__nextTick(fn, 0);
+  } else if (root.process && root.process.nextTick) {
+    root.process.nextTick(fn);
   } else {
     setTimeout(fn, 0);
   }
