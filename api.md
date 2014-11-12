@@ -4,6 +4,7 @@
 
 * [class: Fireproof](#Fireproof)
   * [new Fireproof(firebaseRef)](#new_Fireproof)
+  * [Fireproof.setNextTick(nextTick)](#Fireproof.setNextTick)
   * [Fireproof.bless(Q)](#Fireproof.bless)
   * [fireproof.auth(authToken, [onComplete], [onCancel])](#Fireproof#auth)
   * [fireproof.child(childPath)](#Fireproof#child)
@@ -55,8 +56,13 @@
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
   * [class: Fireproof.Demux](#Fireproof.Demux)
-    * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+    * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
+  * [class: Fireproof.Pager](#Fireproof.Pager)
+    * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
+    * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+    * [pager.next(count)](#Fireproof.Pager#next)
+    * [pager.previous(count)](#Fireproof.Pager#previous)
 * [class: FireproofSnapshot](#FireproofSnapshot)
   * [new FireproofSnapshot(snap)](#new_FireproofSnapshot)
   * [fireproofSnapshot.child(path)](#FireproofSnapshot#child)
@@ -76,6 +82,7 @@
 
 * [class: Fireproof](#Fireproof)
   * [new Fireproof(firebaseRef)](#new_Fireproof)
+  * [Fireproof.setNextTick(nextTick)](#Fireproof.setNextTick)
   * [Fireproof.bless(Q)](#Fireproof.bless)
   * [fireproof.auth(authToken, [onComplete], [onCancel])](#Fireproof#auth)
   * [fireproof.child(childPath)](#Fireproof#child)
@@ -127,8 +134,13 @@
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
   * [class: Fireproof.Demux](#Fireproof.Demux)
-    * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+    * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
+  * [class: Fireproof.Pager](#Fireproof.Pager)
+    * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
+    * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+    * [pager.next(count)](#Fireproof.Pager#next)
+    * [pager.previous(count)](#Fireproof.Pager#previous)
 
 <a name="new_Fireproof"></a>
 ##new Fireproof(firebaseRef)
@@ -147,6 +159,16 @@ and rejects on failure of the property object.
 **Example**  
 var fp = new Fireproof(new Firebase('https://test.firebaseio.com/something'));
 fp.then(function(snap) { console.log(snap.val()); });
+
+<a name="Fireproof.setNextTick"></a>
+##Fireproof.setNextTick(nextTick)
+Tell Fireproof to use a given function to set timeouts from now on.
+NB: If you are using AMD/require.js, you MUST call this function!
+
+**Params**
+
+- nextTick `function` - a function that takes a function and
+runs it in the immediate future.  
 
 <a name="Fireproof.bless"></a>
 ##Fireproof.bless(Q)
@@ -557,17 +579,20 @@ Gets the per-operation counts of Firebase operations.
 **Members**
 
 * [class: Fireproof.Demux](#Fireproof.Demux)
-  * [new Fireproof.Demux(refs)](#new_Fireproof.Demux)
+  * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
   * [demux.get(count)](#Fireproof.Demux#get)
 
 <a name="new_Fireproof.Demux"></a>
-###new Fireproof.Demux(refs)
+###new Fireproof.Demux(refs, [limit])
 A helper object for retrieving sorted Firebase objects from multiple
 locations.
 
 **Params**
 
 - refs `Array` - a list of Fireproof object references to draw from.  
+- \[limit\] `boolean` - Whether to use "limit" to restrict the length
+of queries to Firebase. True by default. Set this to false if you want to
+control the query more directly by setting it on the objects you pass to refs.  
 
 <a name="Fireproof.Demux#get"></a>
 ###demux.get(count)
@@ -578,6 +603,52 @@ Get the next `count` items from the paths, ordered by priority.
 - count `Number` - The number of items to get from the list.  
 
 **Returns**: `Promise` - A promise that resolves with the next `count` items, ordered by priority.  
+<a name="Fireproof.Pager"></a>
+##class: Fireproof.Pager
+**Members**
+
+* [class: Fireproof.Pager](#Fireproof.Pager)
+  * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
+  * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+  * [pager.next(count)](#Fireproof.Pager#next)
+  * [pager.previous(count)](#Fireproof.Pager#previous)
+
+<a name="new_Fireproof.Pager"></a>
+###new Fireproof.Pager(ref)
+A helper object for paging over Firebase objects.
+
+**Params**
+
+- ref <code>[Fireproof](#Fireproof)</code> - a Firebase ref whose children you wish to page over.  
+
+<a name="Fireproof.Pager#setPosition"></a>
+###pager.setPosition(priority, [key])
+Set the starting position for the ref.
+
+**Params**
+
+- priority `*` - The new priority.  
+- \[key\] `String` - The new key.  
+
+**Returns**: `Pager` - The pager is returned.  
+<a name="Fireproof.Pager#next"></a>
+###pager.next(count)
+Get the next page of children from the ref.
+
+**Params**
+
+- count `Number` - The size of the page.  
+
+**Returns**: `Promise` - A promise that resolves with an array of the next children.  
+<a name="Fireproof.Pager#previous"></a>
+###pager.previous(count)
+Get the previous page of children from the ref.
+
+**Params**
+
+- count `Number` - The size of the page.  
+
+**Returns**: `Promise` - A promise that resolves with an array of the next children.  
 <a name="FireproofSnapshot"></a>
 #class: FireproofSnapshot
 **Members**
