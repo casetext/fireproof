@@ -61,8 +61,6 @@ Fireproof._nextTick = function(fn) {
 
   if (Fireproof.__nextTick) {
     Fireproof.__nextTick(fn, 0);
-  } else if (root.process && root.process.nextTick) {
-    root.process.nextTick(fn);
   } else {
     setTimeout(fn, 0);
   }

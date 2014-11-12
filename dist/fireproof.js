@@ -7,12 +7,12 @@
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
-    module.exports = factory(global);
+    module.exports = factory();
   } else {
     // Browser globals (root is window)
-    root.Fireproof = factory(root);
+    root.Fireproof = factory();
   }
-}(this, function (root) {
+}(this, function() {
 
   
 'use strict';
@@ -77,8 +77,6 @@ Fireproof._nextTick = function(fn) {
 
   if (Fireproof.__nextTick) {
     Fireproof.__nextTick(fn, 0);
-  } else if (root.process && root.process.nextTick) {
-    root.process.nextTick(fn);
   } else {
     setTimeout(fn, 0);
   }
@@ -694,13 +692,130 @@ Fireproof.prototype.onDisconnect = function() {
 
 
 
+/**
+ * A helper object for paging over Firebase objects.
+ * @constructor Fireproof.Pager
+ * @static
+ * @param {Fireproof} ref a Firebase ref whose children you wish to page over.
+ */
 function Pager(ref) {
 
   this._positions = [];
-  this._mainRef = ref;
-  this.ref = ref;
+  this._mainRef = ref.ref();
+
+  this._resetCurrentOperation();
 
 }
+
+
+/**
+ * Set the starting position for the ref.
+ * @method Fireproof.Pager#startAt
+ * @param {*} priority The new priority for the startAt.
+ * @param {String} [key] The new key for the startAt.
+ * @returns {Pager} The pager is returned.
+ */
+Pager.prototype.startAt = function(priority, key) {
+
+  if (arguments.length === 0) {
+    throw new Error('Not enough arguments to startAt');
+  }
+
+  this._lastPosition = { priority: priority };
+
+  if (typeof key === 'string') {
+    this._lastPosition.key = key;
+  }
+
+  return this;
+
+};
+
+
+/**
+ * Get the next page of children from the ref.
+ * @method Fireproof.Pager#next
+ * @param {Number} count The size of the page.
+ * @returns {Promise} A promise that resolves with an array of the next children.
+ */
+Pager.prototype.next = function(count) {
+
+  if (arguments.length === 0) {
+    throw new Error('Not enough arguments to next');
+  }
+
+  var self = this;
+
+  return self._currentOperation
+  .then(function() {
+
+    var ref = self._mainRef;
+    if (self._lastPosition) {
+
+      ref = ref.startAt(self._lastPosition.priority, self._lastPosition.key)
+      .limit(count + 1);
+
+    } else {
+      ref = ref.startAt().limit(count);
+    }
+
+    return ref.once('value');
+  })
+  .then(self._handleResults.bind(self))
+  .then(function(results) {
+
+    if (self._lastPosition) {
+      self._positions.push(self._lastPosition);
+    }
+
+    return results;
+
+  });
+
+};
+
+
+/**
+ * Get the previous page of children from the ref.
+ * @method Fireproof.Pager#previous
+ * @param {Number} count The size of the page.
+ * @returns {Promise} A promise that resolves with an array of the next children.
+ */
+Pager.prototype.previous = function(count) {
+
+  if (arguments.length === 0) {
+    throw new Error('Not enough arguments to previous');
+  }
+
+  var self = this;
+
+  return self._currentOperation
+  .then(function() {
+
+    var ref = self._mainRef;
+    if (self._positions.length > 0) {
+
+      var position = self._positions.pop();
+      ref = ref.endAt(position.priority, position.key);
+
+    }
+
+    ref = ref.limit(self._positions.length > 0 ? count + 1 : count);
+
+    return ref.once('value');
+  })
+  .then(self._handleResults.bind(self))
+  .then(function(results) {
+
+    if (self._lastPosition) {
+      self._positions.push(self._lastPosition);
+    }
+
+    return results;
+
+  });
+
+};
 
 
 Pager.prototype._handleResults = function(snap) {
@@ -708,143 +823,40 @@ Pager.prototype._handleResults = function(snap) {
   var self = this,
     objects = [];
 
+  var childIndex = 0;
   snap.forEach(function(child) {
 
-    var childIsStartAt = (child.getPriority() === self._startAt.priority &&
-      child.name() === self._startAt.name);
-
     // if this child is the "catch" object, don't include it in the results
-    if (!(self._positions.length > 0 && childIsStartAt)) {
+    if (self._positions.length === 0 || childIndex > 0) {
 
       objects.push(child);
       self._lastPosition = { priority: child.getPriority(), key: child.name() };
 
     }
 
+    childIndex++;
+
   });
+
+  self._currentOperationCount--;
+
+  if (self._currentOperationCount === 0) {
+    self._resetCurrentOperation();
+  }
 
   return objects;
 
 };
 
 
-Pager.prototype.next = function() {
+Pager.prototype._resetCurrentOperation = function() {
 
-  var self = this,
-    oldStartAt = self._startAt;
-
-  this._startAt = self._lastPosition;
-  this._rebuildRef();
-
-  return this.ref.once('value')
-  .then(function(snap) {
-
-    self._positions.push(oldStartAt);
-    return snap;
-
-  })
-  .then(this._handleResults.bind(this));
+  var deferred = Fireproof._checkQ().defer();
+  deferred.resolve(null);
+  this._currentOperation = deferred.promise;
+  this._currentOperationCount = 0;
 
 };
-
-
-Pager.prototype.previous = function() {
-
-  if (this._positions.length > 0) {
-
-    this._startAt = this._positions.pop();
-    this._rebuildRef();
-
-  }
-
-  return this.ref.once('value')
-  .then(this._handleResults.bind(this));
-
-};
-
-
-Pager.prototype.limit = function(limit) {
-
-  if (arguments.length > 0) {
-
-    this._limit = limit;
-    this._rebuildRef();
-
-  }
-
-  return this._limit;
-
-};
-
-
-Pager.prototype.startAt = function(priority, key) {
-
-  if (arguments.length > 0) {
-
-    this._startAt = { priority: priority };
-
-    if (typeof key === 'string') {
-      this._startAt.key = key;
-    }
-
-    this._rebuildRef();
-
-  }
-
-  return this._startAt;
-
-};
-
-
-Pager.prototype.endAt = function(priority, key) {
-
-  if (arguments.length > 0) {
-
-    this._endAt = { priority: priority };
-
-    if (typeof key === 'string') {
-      this._endAt.key = key;
-    }
-
-    this._rebuildRef();
-
-  }
-
-  return this._endAt;
-
-};
-
-
-Pager.prototype._rebuildRef = function() {
-
-  this.ref = this._mainRef;
-
-  if (this._startAt) {
-
-    if (this._startAt.key) {
-      this.ref = this.ref.startAt(this._startAt.priority, this._startAt.key);
-    } else {
-      this.ref = this.ref.startAt(this._startAt.priority);
-    }
-
-  }
-
-  if (this._endAt) {
-
-    if (this._endAt.key) {
-      this.ref = this.ref.endAt(this._endAt.priority, this._endAt.key);
-    } else {
-      this.ref = this.ref.endAt(this._endAt.priority);
-    }
-
-  }
-
-  if (this._limit) {
-    this.ref = this.ref.limit(this._limit + 1);
-  }
-
-};
-
 
 Fireproof.Pager = Pager;
 

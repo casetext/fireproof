@@ -24,7 +24,6 @@
     "Demux": false,
     "Firebase": false,
     "Fireproof": false,
-    "root": false,
     "firebaseAuthSecret": false,
     "firebase": false,
     "before": false,

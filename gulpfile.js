@@ -98,7 +98,14 @@ gulp.task('test:setup', 'Set up tests.', ['build'], function() {
 
 gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
 
-  gulp.src('./test/**/*.js', { read: false })
+  var src;
+  if (process.env.ONLY) {
+    src = './test/spec/' + process.env.ONLY + '.js';
+  } else {
+    src = './test/spec/**/*.js';
+  }
+
+  gulp.src(src, { read: false })
   .pipe(mocha())
   .once('error', function(e) {
     done(e);
