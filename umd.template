@@ -16,7 +16,6 @@
 
   <%= contents %>
 
-  Fireproof.Demux = Demux;
   return Fireproof;
 
 }));
