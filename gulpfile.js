@@ -109,15 +109,11 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
   .pipe(mocha())
   .once('error', function(e) {
     done(e);
-    setTimeout(function() {
-      process.exit(1);
-    }, 50);
+    process.exit(1);
   })
   .once('end', function() {
     done();
-    setTimeout(function() {
-      process.exit(0);
-    }, 50);
+    process.exit(0);
   });
 
 });

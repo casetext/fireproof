@@ -700,9 +700,7 @@ Fireproof.prototype.onDisconnect = function() {
  */
 function Pager(ref) {
 
-  this._positions = [];
   this._mainRef = ref.ref();
-
   this._resetCurrentOperation();
 
 }
@@ -721,10 +719,10 @@ Pager.prototype.setPosition = function(priority, key) {
     throw new Error('Not enough arguments to setPosition');
   }
 
-  this._lastPosition = { priority: priority };
+  this._position = { priority: priority };
 
   if (typeof key === 'string') {
-    this._lastPosition.key = key;
+    this._position.key = key;
   }
 
   return this;
@@ -749,10 +747,12 @@ Pager.prototype.next = function(count) {
   return self._currentOperation
   .then(function() {
 
-    var ref = self._mainRef;
-    if (self._lastPosition) {
+    self._direction = 'next';
 
-      ref = ref.startAt(self._lastPosition.priority, self._lastPosition.key)
+    var ref = self._mainRef;
+    if (self._position) {
+
+      ref = ref.startAt(self._position.priority, self._position.key)
       .limit(count + 1);
 
     } else {
@@ -761,16 +761,7 @@ Pager.prototype.next = function(count) {
 
     return ref.once('value');
   })
-  .then(self._handleResults.bind(self))
-  .then(function(results) {
-
-    if (self._lastPosition) {
-      self._positions.push(self._lastPosition);
-    }
-
-    return results;
-
-  });
+  .then(self._handleResults.bind(self));
 
 };
 
@@ -792,28 +783,21 @@ Pager.prototype.previous = function(count) {
   return self._currentOperation
   .then(function() {
 
+    self._direction = 'previous';
+
     var ref = self._mainRef;
-    if (self._positions.length > 0) {
+    if (self._position) {
 
-      var position = self._positions.pop();
-      ref = ref.endAt(position.priority, position.key);
+      ref = ref.endAt(self._position.priority, self._position.key)
+      .limit(count + 1);
 
+    } else {
+      ref = ref.limit(count);
     }
-
-    ref = ref.limit(self._positions.length > 0 ? count + 1 : count);
 
     return ref.once('value');
   })
-  .then(self._handleResults.bind(self))
-  .then(function(results) {
-
-    if (self._lastPosition) {
-      self._positions.push(self._lastPosition);
-    }
-
-    return results;
-
-  });
+  .then(self._handleResults.bind(self));
 
 };
 
@@ -824,13 +808,22 @@ Pager.prototype._handleResults = function(snap) {
     objects = [];
 
   var childIndex = 0;
+  var childCount = snap.numChildren();
+
   snap.forEach(function(child) {
 
     // if this child is the "catch" object, don't include it in the results
-    if (self._positions.length === 0 || childIndex > 0) {
+    var isCatchObject;
+    if (self._direction === 'next') {
+      isCatchObject = self._position && childIndex === 0;
+    } else {
+      isCatchObject = self._position && childIndex === childCount-1;
+    }
+
+    if (!isCatchObject) {
 
       objects.push(child);
-      self._lastPosition = { priority: child.getPriority(), key: child.name() };
+      self._position = { priority: child.getPriority(), key: child.name() };
 
     }
 

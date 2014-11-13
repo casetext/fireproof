@@ -29,6 +29,7 @@ describe('Pager', function() {
     pager = new Fireproof.Pager(root.child('pagertest'));
   });
 
+
   describe('#next', function() {
 
     it('gets the next set of children from the reference', function() {
@@ -79,6 +80,7 @@ describe('Pager', function() {
 
   });
 
+
   describe('#previous', function() {
 
     it('gets the last set of children from the reference', function() {
@@ -89,7 +91,7 @@ describe('Pager', function() {
       })
       .then(function(results) {
 
-        var i = 4;
+        var i = 3;
         expect(results.length).to.equal(4);
         results.forEach(function(result) {
 
@@ -103,5 +105,28 @@ describe('Pager', function() {
     });
 
   });
+
+
+  describe('#setPosition', function() {
+
+    it('sets the cursor position of the pager', function() {
+
+      return pager.next(8)
+      .then(function(snaps) {
+        var snap = snaps[2];
+        pager.setPosition(snap.getPriority(), snap.name());
+        return pager.previous(1);
+      })
+      .then(function(results) {
+
+        expect(results.length).to.equal(1);
+        expect(results[0].getPriority()).to.equal(1);
+
+      });
+
+    });
+
+  });
+
 
 });
