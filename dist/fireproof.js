@@ -262,7 +262,6 @@ Fireproof.prototype.toString = function() {
   return this._ref.toString();
 };
 
-module.exports = Fireproof;
 
 
 function findOptions(onComplete, options) {
