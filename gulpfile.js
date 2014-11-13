@@ -118,17 +118,17 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
 
 });
 
-gulp.task('bump', 'Publishes a new bugfix version.', function(done) {
+gulp.task('bump', 'Publishes a new bugfix version.', ['build'], function(done) {
   inc('patch', done);
 });
 
 
-gulp.task('bump:minor', 'Publishes a new minor version.', function(done) {
+gulp.task('bump:minor', 'Publishes a new minor version.', ['build'], function(done) {
   inc('minor', done);
 });
 
 
-gulp.task('bump:major', 'Publishes a new major version.', function(done) {
+gulp.task('bump:major', 'Publishes a new major version.', ['build'], function(done) {
   inc('major', done);
 });
 
