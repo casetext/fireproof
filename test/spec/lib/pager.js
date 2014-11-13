@@ -26,7 +26,7 @@ describe('Pager', function() {
   });
 
   beforeEach(function() {
-    pager = new Fireproof.Pager(root.child('pagertest'));
+    pager = new Fireproof.Pager(root.child('pagertest'), 10);
   });
 
 
@@ -36,8 +36,7 @@ describe('Pager', function() {
 
       var seenValues = {};
 
-      return pager.next(10)
-      .then(function(children) {
+      return pager.then(function(children) {
 
         var prevPriority;
         expect(children.length).to.equal(10);
@@ -85,13 +84,15 @@ describe('Pager', function() {
 
     it('gets the last set of children from the reference', function() {
 
-      return pager.next(8)
+      return pager.then(function() {
+        return pager.next(4);
+      })
       .then(function() {
         return pager.previous(4);
       })
       .then(function(results) {
 
-        var i = 3;
+        var i = 6;
         expect(results.length).to.equal(4);
         results.forEach(function(result) {
 
@@ -99,28 +100,6 @@ describe('Pager', function() {
           i++;
 
         });
-
-      });
-
-    });
-
-  });
-
-
-  describe('#setPosition', function() {
-
-    it('sets the cursor position of the pager', function() {
-
-      return pager.next(8)
-      .then(function(snaps) {
-        var snap = snaps[2];
-        pager.setPosition(snap.getPriority(), snap.name());
-        return pager.previous(1);
-      })
-      .then(function(results) {
-
-        expect(results.length).to.equal(1);
-        expect(results[0].getPriority()).to.equal(1);
 
       });
 
