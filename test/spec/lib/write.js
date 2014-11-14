@@ -16,16 +16,18 @@ describe('write operation', function() {
     it('promises to set the object to the given value', function() {
 
       var didSet;
-      return expect(
+      return
         fireproof.child('test')
         .set(true, function(err) {
+          console.log('hi');
           didSet = (err === null);
         })
         .delay(10)
         .then(function() {
+          console.log('hello');
           expect(didSet).to.equal(true);
-        }))
-      .to.be.fulfilled;
+        });
+      //.to.be.fulfilled;
 
     });
 

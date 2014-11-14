@@ -90,10 +90,13 @@ Fireproof._handleError = function(onComplete) {
 
   var rv = function(err, val) {
 
+    var context = this,
+      rvArgs = arguments;
+
     if (onComplete && typeof onComplete === 'function') {
 
       Fireproof._nextTick(function() {
-        onComplete(err);
+        onComplete.apply(context, rvArgs);
       });
 
     }
