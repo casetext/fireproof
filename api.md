@@ -59,8 +59,7 @@
     * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
   * [class: Fireproof.Pager](#Fireproof.Pager)
-    * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
-    * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+    * [new Fireproof.Pager(ref, [initialCount])](#new_Fireproof.Pager)
     * [pager.next(count)](#Fireproof.Pager#next)
     * [pager.previous(count)](#Fireproof.Pager#previous)
 * [class: FireproofSnapshot](#FireproofSnapshot)
@@ -137,8 +136,7 @@
     * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
   * [class: Fireproof.Pager](#Fireproof.Pager)
-    * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
-    * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+    * [new Fireproof.Pager(ref, [initialCount])](#new_Fireproof.Pager)
     * [pager.next(count)](#Fireproof.Pager#next)
     * [pager.previous(count)](#Fireproof.Pager#previous)
 
@@ -608,29 +606,19 @@ Get the next `count` items from the paths, ordered by priority.
 **Members**
 
 * [class: Fireproof.Pager](#Fireproof.Pager)
-  * [new Fireproof.Pager(ref)](#new_Fireproof.Pager)
-  * [pager.setPosition(priority, [key])](#Fireproof.Pager#setPosition)
+  * [new Fireproof.Pager(ref, [initialCount])](#new_Fireproof.Pager)
   * [pager.next(count)](#Fireproof.Pager#next)
   * [pager.previous(count)](#Fireproof.Pager#previous)
 
 <a name="new_Fireproof.Pager"></a>
-###new Fireproof.Pager(ref)
+###new Fireproof.Pager(ref, [initialCount])
 A helper object for paging over Firebase objects.
 
 **Params**
 
 - ref <code>[Fireproof](#Fireproof)</code> - a Firebase ref whose children you wish to page over.  
+- \[initialCount\] `Number` - The number of objects in the first page.  
 
-<a name="Fireproof.Pager#setPosition"></a>
-###pager.setPosition(priority, [key])
-Set the starting position for the ref.
-
-**Params**
-
-- priority `*` - The new priority.  
-- \[key\] `String` - The new key.  
-
-**Returns**: `Pager` - The pager is returned.  
 <a name="Fireproof.Pager#next"></a>
 ###pager.next(count)
 Get the next page of children from the ref.
