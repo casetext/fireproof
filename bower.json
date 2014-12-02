@@ -6,6 +6,7 @@
   "authors": [
     "Harry Schmidt <goldibex@casetext.com>"
   ],
+  "main": "dist/fireproof.js",
   "moduleType": [
     "amd",
     "globals",
