@@ -1,0 +1,22 @@
+{
+  "name": "fireproof",
+  "main": "index.js",
+  "version": "1.15.3",
+  "homepage": "https://github.com/casetext/fireproof",
+  "authors": [
+    "Harry Schmidt <goldibex@casetext.com>"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
