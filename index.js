@@ -77,6 +77,12 @@ Fireproof._handleError = function(onComplete) {
     var context = this,
       rvArgs = arguments;
 
+
+    // finish stats event, if there is one.
+    if (rv.id) {
+      Fireproof.stats._finish(rv.id, err);
+    }
+
     if (onComplete && typeof onComplete === 'function') {
 
       Fireproof._nextTick(function() {

@@ -20,11 +20,39 @@ describe('Stats', function() {
 
       Fireproof.stats.reset();
       Fireproof.stats.resetListeners();
-      expect(Fireproof.stats.events.read.length).to.equal(0);
-      expect(Fireproof.stats.events.write.length).to.equal(0);
-      expect(Fireproof.stats.events.update.length).to.equal(0);
-      expect(Object.keys(Fireproof.stats.listeners).length).to.equal(0);
+      expect(Object.keys(Fireproof.stats.operationLog).length).to.equal(0);
+    });
 
+  });
+
+  describe('when Firebase operations happen', function() {
+
+    var startFn, finishFn;
+
+    it('emits "start" and "finish" events for them', function(done) {
+
+      startFn = Fireproof.stats.on('start', function(event) {
+        expect(event.type).to.equal('write');
+      });
+
+      finishFn = Fireproof.stats.on('finish', function(event) {
+
+        expect(event.start).to.be.defined;
+        expect(event.finish).to.be.defined;
+        expect(event.type).to.equal('write');
+
+        done();
+      });
+
+      statsRef.child('a').set(true);
+
+    });
+
+    after(function() {
+      Fireproof.stats.off('start', startFn);
+      Fireproof.stats.off('finish', finishFn);
+      Fireproof.stats.reset();
+      Fireproof.stats.resetListeners();
     });
 
   });
