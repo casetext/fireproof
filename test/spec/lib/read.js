@@ -101,12 +101,12 @@ describe('Read operation', function() {
       var name, value;
       return expect(
         fireproof.child('onceTest').once('child_added', function(snap) {
-          name = snap.name();
+          name = snap.key();
           value = snap.val();
         })
         .then(function(snap) {
           return {
-            name: snap.name(),
+            name: snap.key(),
             value: snap.val()
           };
         })

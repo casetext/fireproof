@@ -32,7 +32,7 @@ describe('FireproofSnapshot', function() {
 
         snap.forEach(function(child) {
           expect(child.constructor.name).to.equal('FireproofSnapshot');
-          expect(child.name()).to.match(/^(foo|baz|bells)$/);
+          expect(child.key()).to.match(/^(foo|baz|bells)$/);
           expect(child.val()).to.match(/^(bar|quux|whistles)$/);
         });
 

@@ -72,20 +72,20 @@ describe('Fireproof', function() {
   describe('#toFirebase', function() {
 
     it('hands back the original Firebase reference', function() {
-      expect(fireproof.toFirebase().constructor.name).to.equal('F');
+      expect(fireproof.toFirebase().constructor.name).to.equal('M');
     });
 
   });
 
 
-  describe('#name', function() {
+  describe('#key', function() {
 
     it('returns null for a top-level reference', function() {
-      expect(fireproof.name()).to.equal(null);
+      expect(fireproof.key()).to.equal(null);
     });
 
     it('returns the last part of the name of a reference', function() {
-      expect(fireproof.child('foo').child('bar').name())
+      expect(fireproof.child('foo').child('bar').key())
       .to.equal('bar');
     });
 
