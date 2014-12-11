@@ -12,6 +12,7 @@
   * [fireproof.root()](#Fireproof#root)
   * [fireproof.toFirebase()](#Fireproof#toFirebase)
   * [fireproof.name()](#Fireproof#name)
+  * [fireproof.key()](#Fireproof#key)
   * [fireproof.toString()](#Fireproof#toString)
   * [fireproof.authWithCustomToken(authToken, [onComplete], [options])](#Fireproof#authWithCustomToken)
   * [fireproof.authAnonymously([onComplete], [options])](#Fireproof#authAnonymously)
@@ -30,9 +31,14 @@
     * [onDisconnect.setWithPriority(value, priority, [callback])](#Fireproof#onDisconnect#setWithPriority)
     * [onDisconnect.update(value, [callback])](#Fireproof#onDisconnect#update)
   * [fireproof.limit(limit)](#Fireproof#limit)
-  * [fireproof.startAt(priority, name)](#Fireproof#startAt)
-  * [fireproof.endAt(priority, name)](#Fireproof#endAt)
-  * [fireproof.equalTo(priority, name)](#Fireproof#equalTo)
+  * [fireproof.limitToFirst(limit)](#Fireproof#limitToFirst)
+  * [fireproof.limitToLast(limit)](#Fireproof#limitToLast)
+  * [fireproof.orderByChild(key)](#Fireproof#orderByChild)
+  * [fireproof.orderByKey()](#Fireproof#orderByKey)
+  * [fireproof.orderByPriority()](#Fireproof#orderByPriority)
+  * [fireproof.equalTo(value, [key])](#Fireproof#equalTo)
+  * [fireproof.startAt(value, [key])](#Fireproof#startAt)
+  * [fireproof.endAt(value, [key])](#Fireproof#endAt)
   * [fireproof.ref()](#Fireproof#ref)
   * [fireproof.transaction(updateFunction, onComplete, [applyLocally])](#Fireproof#transaction)
   * [fireproof.on(eventType, callback, [cancelCallback], [context])](#Fireproof#on)
@@ -50,14 +56,19 @@
   * [fireproof.setPriority(priority, [onComplete])](#Fireproof#setPriority)
   * [Fireproof.stats](#Fireproof.stats)
     * [stats.reset()](#Fireproof.stats.reset)
-    * [stats.resetListeners()](#Fireproof.stats.resetListeners)
     * [stats.getListeners()](#Fireproof.stats.getListeners)
     * [stats.getListenerCount()](#Fireproof.stats.getListenerCount)
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
+    * [stats.on(name, fn)](#Fireproof.stats.on)
+    * [stats.off([name], fn)](#Fireproof.stats.off)
   * [class: Fireproof.Demux](#Fireproof.Demux)
-    * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
+    * [new Fireproof.Demux(refs, [limitToFirst])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
+  * [class: Fireproof.LiveArray](#Fireproof.LiveArray)
+    * [new Fireproof.LiveArray([errorHandler])](#new_Fireproof.LiveArray)
+    * [liveArray.connect([ref], [sortMode], [sortProperty])](#Fireproof.LiveArray#connect)
+    * [liveArray.disconnect()](#Fireproof.LiveArray#disconnect)
   * [class: Fireproof.Pager](#Fireproof.Pager)
     * [new Fireproof.Pager(ref, [initialCount])](#new_Fireproof.Pager)
     * [pager.next(count)](#Fireproof.Pager#next)
@@ -70,6 +81,7 @@
   * [fireproofSnapshot.hasChildren()](#FireproofSnapshot#hasChildren)
   * [fireproofSnapshot.numChildren()](#FireproofSnapshot#numChildren)
   * [fireproofSnapshot.name()](#FireproofSnapshot#name)
+  * [fireproofSnapshot.key()](#FireproofSnapshot#key)
   * [fireproofSnapshot.val()](#FireproofSnapshot#val)
   * [fireproofSnapshot.ref()](#FireproofSnapshot#ref)
   * [fireproofSnapshot.getPriority()](#FireproofSnapshot#getPriority)
@@ -89,6 +101,7 @@
   * [fireproof.root()](#Fireproof#root)
   * [fireproof.toFirebase()](#Fireproof#toFirebase)
   * [fireproof.name()](#Fireproof#name)
+  * [fireproof.key()](#Fireproof#key)
   * [fireproof.toString()](#Fireproof#toString)
   * [fireproof.authWithCustomToken(authToken, [onComplete], [options])](#Fireproof#authWithCustomToken)
   * [fireproof.authAnonymously([onComplete], [options])](#Fireproof#authAnonymously)
@@ -107,9 +120,14 @@
     * [onDisconnect.setWithPriority(value, priority, [callback])](#Fireproof#onDisconnect#setWithPriority)
     * [onDisconnect.update(value, [callback])](#Fireproof#onDisconnect#update)
   * [fireproof.limit(limit)](#Fireproof#limit)
-  * [fireproof.startAt(priority, name)](#Fireproof#startAt)
-  * [fireproof.endAt(priority, name)](#Fireproof#endAt)
-  * [fireproof.equalTo(priority, name)](#Fireproof#equalTo)
+  * [fireproof.limitToFirst(limit)](#Fireproof#limitToFirst)
+  * [fireproof.limitToLast(limit)](#Fireproof#limitToLast)
+  * [fireproof.orderByChild(key)](#Fireproof#orderByChild)
+  * [fireproof.orderByKey()](#Fireproof#orderByKey)
+  * [fireproof.orderByPriority()](#Fireproof#orderByPriority)
+  * [fireproof.equalTo(value, [key])](#Fireproof#equalTo)
+  * [fireproof.startAt(value, [key])](#Fireproof#startAt)
+  * [fireproof.endAt(value, [key])](#Fireproof#endAt)
   * [fireproof.ref()](#Fireproof#ref)
   * [fireproof.transaction(updateFunction, onComplete, [applyLocally])](#Fireproof#transaction)
   * [fireproof.on(eventType, callback, [cancelCallback], [context])](#Fireproof#on)
@@ -127,14 +145,19 @@
   * [fireproof.setPriority(priority, [onComplete])](#Fireproof#setPriority)
   * [Fireproof.stats](#Fireproof.stats)
     * [stats.reset()](#Fireproof.stats.reset)
-    * [stats.resetListeners()](#Fireproof.stats.resetListeners)
     * [stats.getListeners()](#Fireproof.stats.getListeners)
     * [stats.getListenerCount()](#Fireproof.stats.getListenerCount)
     * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
     * [stats.getCounts()](#Fireproof.stats.getCounts)
+    * [stats.on(name, fn)](#Fireproof.stats.on)
+    * [stats.off([name], fn)](#Fireproof.stats.off)
   * [class: Fireproof.Demux](#Fireproof.Demux)
-    * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
+    * [new Fireproof.Demux(refs, [limitToFirst])](#new_Fireproof.Demux)
     * [demux.get(count)](#Fireproof.Demux#get)
+  * [class: Fireproof.LiveArray](#Fireproof.LiveArray)
+    * [new Fireproof.LiveArray([errorHandler])](#new_Fireproof.LiveArray)
+    * [liveArray.connect([ref], [sortMode], [sortProperty])](#Fireproof.LiveArray#connect)
+    * [liveArray.disconnect()](#Fireproof.LiveArray#disconnect)
   * [class: Fireproof.Pager](#Fireproof.Pager)
     * [new Fireproof.Pager(ref, [initialCount])](#new_Fireproof.Pager)
     * [pager.next(count)](#Fireproof.Pager#next)
@@ -214,6 +237,11 @@ Hands back the original Firebase reference.
 <a name="Fireproof#name"></a>
 ##fireproof.name()
 Delegates Firebase#name.
+
+**Returns**: `string` - The last component of this reference object's path.  
+<a name="Fireproof#key"></a>
+##fireproof.key()
+Delegates Firebase#key.
 
 **Returns**: `string` - The last component of this reference object's path.  
 <a name="Fireproof#toString"></a>
@@ -328,34 +356,71 @@ Delegates Firebase#limit.
 - limit `Number`  
 
 **Returns**: [Fireproof](#Fireproof)  
-<a name="Fireproof#startAt"></a>
-##fireproof.startAt(priority, name)
-Delegates Firebase#startAt.
+<a name="Fireproof#limitToFirst"></a>
+##fireproof.limitToFirst(limit)
+Delegates Firebase#limitToFirst.
 
 **Params**
 
-- priority `object`  
-- name `string`  
+- limit `Number`  
 
 **Returns**: [Fireproof](#Fireproof)  
-<a name="Fireproof#endAt"></a>
-##fireproof.endAt(priority, name)
-Delegates Firebase#endAt.
+<a name="Fireproof#limitToLast"></a>
+##fireproof.limitToLast(limit)
+Delegates Firebase#limitToLast.
 
 **Params**
 
-- priority `object`  
-- name `string`  
+- limit `Number`  
+
+**Returns**: [Fireproof](#Fireproof)  
+<a name="Fireproof#orderByChild"></a>
+##fireproof.orderByChild(key)
+Delegates Firebase#orderByChild.
+
+**Params**
+
+- key `string`  
+
+**Returns**: [Fireproof](#Fireproof)  
+<a name="Fireproof#orderByKey"></a>
+##fireproof.orderByKey()
+Delegates Firebase#orderByKey.
+
+**Returns**: [Fireproof](#Fireproof)  
+<a name="Fireproof#orderByPriority"></a>
+##fireproof.orderByPriority()
+Delegates Firebase#orderByPriority.
 
 **Returns**: [Fireproof](#Fireproof)  
 <a name="Fireproof#equalTo"></a>
-##fireproof.equalTo(priority, name)
+##fireproof.equalTo(value, [key])
 Delegates Firebase#equalTo.
 
 **Params**
 
-- priority `object`  
-- name `string`  
+- value `String` | `Number` | `null`  
+- \[key\] `String`  
+
+**Returns**: [Fireproof](#Fireproof)  
+<a name="Fireproof#startAt"></a>
+##fireproof.startAt(value, [key])
+Delegates Firebase#startAt.
+
+**Params**
+
+- value `object`  
+- \[key\] `string`  
+
+**Returns**: [Fireproof](#Fireproof)  
+<a name="Fireproof#endAt"></a>
+##fireproof.endAt(value, [key])
+Delegates Firebase#endAt.
+
+**Params**
+
+- value `object`  
+- \[key\] `string`  
 
 **Returns**: [Fireproof](#Fireproof)  
 <a name="Fireproof#ref"></a>
@@ -528,26 +593,25 @@ Statistics about Firebase usage.
 
 **Properties**
 
-- events `object`  
-- listeners `object`  
+- operationLog `object`  
+- runningOperationCount `object`  
+- operationCount `object`  
+- listenCount `object`  
 
 **Members**
 
 * [Fireproof.stats](#Fireproof.stats)
   * [stats.reset()](#Fireproof.stats.reset)
-  * [stats.resetListeners()](#Fireproof.stats.resetListeners)
   * [stats.getListeners()](#Fireproof.stats.getListeners)
   * [stats.getListenerCount()](#Fireproof.stats.getListenerCount)
   * [stats.getPathCounts()](#Fireproof.stats.getPathCounts)
   * [stats.getCounts()](#Fireproof.stats.getCounts)
+  * [stats.on(name, fn)](#Fireproof.stats.on)
+  * [stats.off([name], fn)](#Fireproof.stats.off)
 
 <a name="Fireproof.stats.reset"></a>
 ###stats.reset()
 Resets the count of Firebase operations back to 0.
-
-<a name="Fireproof.stats.resetListeners"></a>
-###stats.resetListeners()
-Resets the count of Firebase listeners back to 0.
 
 <a name="Fireproof.stats.getListeners"></a>
 ###stats.getListeners()
@@ -563,32 +627,54 @@ Gets the total number of listeners on Firebase locations.
 ###stats.getPathCounts()
 Gets the per-operation, per-path counts of Firebase operations.
 
-**Returns**: `Object` - An object with three keys: "read", "write",
+**Returns**: `Object` - An object with keys like "listen", "readOnce", "write",
 and "update". Each key has an object value, of which the keys are Firebase
 paths and the values are counts.  
 <a name="Fireproof.stats.getCounts"></a>
 ###stats.getCounts()
 Gets the per-operation counts of Firebase operations.
 
-**Returns**: `Object` - An object with three keys: "read", "write", and
-"update". The values are the counts of operations under those headings.  
+**Returns**: `Object` - An object with with keys like "read", "write",
+and "update". The values are the counts of operations under those headings.  
+<a name="Fireproof.stats.on"></a>
+###stats.on(name, fn)
+Listens for Firebase events occurring.
+
+**Params**
+
+- name `String` - The name of the event. One of 'start', 'finish', 'error',
+'listenStarted', or 'listenEnded.'  
+- fn `function` - The function to call when the event happens. Takes a single
+parameter, the event object.  
+
+**Returns**: `function` - fn is returned for convenience, to pass to `off`.  
+<a name="Fireproof.stats.off"></a>
+###stats.off([name], fn)
+Stops sending events to a listener.
+
+**Params**
+
+- \[name\] `String` - The name of the event. One of 'start', 'finish', 'error',
+'listenStarted', or 'listenEnded.'  
+- fn `function` - The function to stop calling.  
+
 <a name="Fireproof.Demux"></a>
 ##class: Fireproof.Demux
 **Members**
 
 * [class: Fireproof.Demux](#Fireproof.Demux)
-  * [new Fireproof.Demux(refs, [limit])](#new_Fireproof.Demux)
+  * [new Fireproof.Demux(refs, [limitToFirst])](#new_Fireproof.Demux)
   * [demux.get(count)](#Fireproof.Demux#get)
 
 <a name="new_Fireproof.Demux"></a>
-###new Fireproof.Demux(refs, [limit])
+###new Fireproof.Demux(refs, [limitToFirst])
 A helper object for retrieving sorted Firebase objects from multiple
 locations.
 
 **Params**
 
 - refs `Array` - a list of Fireproof object references to draw from.  
-- \[limit\] `boolean` - Whether to use "limit" to restrict the length
+- \[limitToFirst\] `boolean` - Whether to use "limitToFirst" to restrict the length
 of queries to Firebase. True by default. Set this to false if you want to
 control the query more directly by setting it on the objects you pass to refs.  
 
@@ -601,6 +687,53 @@ Get the next `count` items from the paths, ordered by priority.
 - count `Number` - The number of items to get from the list.  
 
 **Returns**: `Promise` - A promise that resolves with the next `count` items, ordered by priority.  
+<a name="Fireproof.LiveArray"></a>
+##class: Fireproof.LiveArray
+**Members**
+
+* [class: Fireproof.LiveArray](#Fireproof.LiveArray)
+  * [new Fireproof.LiveArray([errorHandler])](#new_Fireproof.LiveArray)
+  * [liveArray.connect([ref], [sortMode], [sortProperty])](#Fireproof.LiveArray#connect)
+  * [liveArray.disconnect()](#Fireproof.LiveArray#disconnect)
+
+<a name="new_Fireproof.LiveArray"></a>
+###new Fireproof.LiveArray([errorHandler])
+A live array that keeps its members in sync with a Firebase location's children.
+The three array references, `keys`, `values`, and `priorities`, are guaranteed
+to persist for the lifetime of the array. In other words, the arrays themselves
+are constant; only their contents are mutable. This is highly useful behavior
+for dirty-checking environments like Angular.js.
+
+**Params**
+
+- \[errorHandler\] `function` - a function to be called if a Firebase error occurs.  
+
+**Properties**
+
+- keys `Array` - A live array of the keys at the Firebase ref.  
+- values `Array` - A live array of the values at the Firebase ref.  
+- priorities `Array` - A live array of the priorities at the Firebase ref.  
+
+<a name="Fireproof.LiveArray#connect"></a>
+###liveArray.connect([ref], [sortMode], [sortProperty])
+Connect this LiveArray to a Firebase reference, instantiating listeners
+for child events.
+If an error is received from a Firebase listener, _all_ listeners are
+disconnected, LiveArray#error is set, and your error handler is called if you
+supplied one.
+
+**Params**
+
+- \[ref\] <code>[Fireproof](#Fireproof)</code> - a Firebase ref whose children you wish to sync to.  
+- \[sortMode\] `String` - "key", "priority", or "child".  
+- \[sortProperty\] `String` - The name of the child property to sort on, if
+sortMode is null.  
+
+<a name="Fireproof.LiveArray#disconnect"></a>
+###liveArray.disconnect()
+Disconnect this LiveArray from a Firebase reference, removing all listeners.
+Also clears the contents of the live array references.
+
 <a name="Fireproof.Pager"></a>
 ##class: Fireproof.Pager
 **Members**
@@ -649,6 +782,7 @@ Get the previous page of children from the ref.
   * [fireproofSnapshot.hasChildren()](#FireproofSnapshot#hasChildren)
   * [fireproofSnapshot.numChildren()](#FireproofSnapshot#numChildren)
   * [fireproofSnapshot.name()](#FireproofSnapshot#name)
+  * [fireproofSnapshot.key()](#FireproofSnapshot#key)
   * [fireproofSnapshot.val()](#FireproofSnapshot#val)
   * [fireproofSnapshot.ref()](#FireproofSnapshot#ref)
   * [fireproofSnapshot.getPriority()](#FireproofSnapshot#getPriority)
@@ -703,6 +837,11 @@ Delegates DataSnapshot#numChildren.
 <a name="FireproofSnapshot#name"></a>
 ##fireproofSnapshot.name()
 Delegates DataSnapshot#name.
+
+**Returns**: `String` - The last part of the snapshot's path.  
+<a name="FireproofSnapshot#key"></a>
+##fireproofSnapshot.key()
+Delegates DataSnapshot#key.
 
 **Returns**: `String` - The last part of the snapshot's path.  
 <a name="FireproofSnapshot#val"></a>
