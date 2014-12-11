@@ -1719,7 +1719,6 @@ Fireproof.stats._finish = function(id, err) {
     logEvent.duration = logEvent.finish - logEvent.start;
     if (err) {
       logEvent.error = err;
-      Fireproof.stats.errors.push(err);
     }
 
   }
