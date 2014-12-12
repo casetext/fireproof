@@ -34,11 +34,11 @@ describe('Pager', function() {
 
     it('gets the next set of children from the reference', function() {
 
-      var seenValues = {};
+      var seenValues = {},
+        prevPriority;
 
       return pager.then(function(children) {
 
-        var prevPriority;
         expect(pager.hasPrevious).to.be.true;
         expect(pager.hasNext).to.be.true;
         expect(children.length).to.equal(10);
@@ -55,21 +55,37 @@ describe('Pager', function() {
 
         });
 
-        return pager.next(10);
+        return pager.next(4);
 
       })
       .then(function(children) {
 
-        var prevPriority;
-        expect(children.length).to.equal(10);
+        expect(children.length).to.equal(4);
         expect(pager.hasPrevious).to.be.true;
-        expect(pager.hasNext).to.be.false;
+        expect(pager.hasNext).to.be.true;
+
         children.forEach(function(child) {
 
-          if (prevPriority) {
-            expect(child.getPriority()).to.be.gte(prevPriority);
-          }
+          expect(child.getPriority()).to.be.gte(prevPriority);
+          expect(seenValues).not.to.contain.key(child.val());
+          seenValues[child.val()] = true;
 
+          prevPriority = child.getPriority();
+
+        });
+
+        return pager.next(20);
+
+      })
+      .then(function(children) {
+
+        expect(children.length).to.equal(6);
+        expect(pager.hasPrevious).to.be.true;
+        expect(pager.hasNext).to.be.false;
+
+        children.forEach(function(child) {
+
+          expect(child.getPriority()).to.be.gte(prevPriority);
           expect(seenValues).not.to.contain.key(child.val());
           seenValues[child.val()] = true;
 
