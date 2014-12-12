@@ -817,9 +817,6 @@ LiveArray.prototype.connect = function(ref, sortMode, sortProperty) {
   var self = this;
 
   self.ref = ref;
-  if (self.ref.toFirebase) {
-    self.ref = self.ref.toFirebase();
-  }
 
   self.error = null;
   function handleError(err) {
@@ -832,8 +829,7 @@ LiveArray.prototype.connect = function(ref, sortMode, sortProperty) {
 
   self.watchers = [
 
-    ref.toFirebase()
-    .on('child_added', function(snap) {
+    ref.on('child_added', function(snap) {
 
       var newVal = {
         '.key': snap.key(),
@@ -845,16 +841,14 @@ LiveArray.prototype.connect = function(ref, sortMode, sortProperty) {
       self._sort(sortMode, sortProperty);
 
     }, handleError),
-    ref.toFirebase()
-    .on('child_removed', function(snap) {
+    ref.on('child_removed', function(snap) {
 
       var indexOfItem = self.keys.indexOf(snap.key());
       self._items.splice(indexOfItem, 1);
       self._sort(sortMode, sortProperty);
 
     }, handleError),
-    ref.toFirebase()
-    .on('child_changed', function(snap) {
+    ref.on('child_changed', function(snap) {
 
       // child_changed explicitly means a value change
       var indexOfItem = self.keys.indexOf(snap.key());
@@ -862,8 +856,7 @@ LiveArray.prototype.connect = function(ref, sortMode, sortProperty) {
       self._sort(sortMode, sortProperty);
 
     }, handleError),
-    ref.toFirebase()
-    .on('child_moved', function(snap) {
+    ref.on('child_moved', function(snap) {
 
       // child_moved explicitly means a priority change
       var indexOfItem = self.keys.indexOf(snap.key());
