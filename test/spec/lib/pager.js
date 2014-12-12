@@ -39,6 +39,8 @@ describe('Pager', function() {
       return pager.then(function(children) {
 
         var prevPriority;
+        expect(pager.hasPrevious).to.be.true;
+        expect(pager.hasNext).to.be.true;
         expect(children.length).to.equal(10);
         children.forEach(function(child) {
 
@@ -60,6 +62,8 @@ describe('Pager', function() {
 
         var prevPriority;
         expect(children.length).to.equal(10);
+        expect(pager.hasPrevious).to.be.true;
+        expect(pager.hasNext).to.be.false;
         children.forEach(function(child) {
 
           if (prevPriority) {
@@ -84,21 +88,34 @@ describe('Pager', function() {
 
     it('gets the last set of children from the reference', function() {
 
+      var i;
       return pager.then(function() {
         return pager.next(4);
       })
       .then(function() {
-        return pager.previous(4);
+        return pager.previous(6);
       })
       .then(function(results) {
 
-        var i = 6;
-        expect(results.length).to.equal(4);
+        expect(pager.hasPrevious).to.be.true;
+        expect(pager.hasNext).to.be.true;
+        expect(results.length).to.equal(6);
+        i = 7;
         results.forEach(function(result) {
+          expect(result.getPriority()).to.equal(i++);
+        });
 
-          expect(result.getPriority()).to.equal(i);
-          i++;
+        return pager.previous(20);
 
+      })
+      .then(function(results) {
+
+        expect(pager.hasPrevious).to.be.false;
+        expect(pager.hasNext).to.be.true;
+        expect(results.length).to.equal(7);
+        i = 0;
+        results.forEach(function(result) {
+          expect(result.getPriority()).to.equal(i++);
         });
 
       });

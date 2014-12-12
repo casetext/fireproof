@@ -752,6 +752,11 @@ A helper object for paging over Firebase objects.
 - ref <code>[Fireproof](#Fireproof)</code> - a Firebase ref whose children you wish to page over.  
 - \[initialCount\] `Number` - The number of objects in the first page.  
 
+**Properties**
+
+- hasPrevious `Boolean` - True if there are more objects before the current page.  
+- hasNext `Boolean` - True if there are more objects after the current page.  
+
 <a name="Fireproof.Pager#next"></a>
 ###pager.next(count)
 Get the next page of children from the ref.
