@@ -1075,7 +1075,7 @@ Pager.prototype.next = function(count) {
     var ref = self._mainRef;
     if (self._page) {
 
-      ref = ref.startAt(self._page.end.priority, self._page.end.key)
+      ref = ref.orderByPriority().startAt(self._page.end.priority, self._page.end.key)
       .limitToFirst(count + 1);
 
     } else {
@@ -1111,7 +1111,7 @@ Pager.prototype.previous = function(count) {
     var ref = self._mainRef;
     if (self._page) {
 
-      ref = ref.endAt(self._page.start.priority, self._page.start.key)
+      ref = ref.orderByPriority().endAt(self._page.start.priority, self._page.start.key)
       .limitToLast(count + 1);
 
     } else {

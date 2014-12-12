@@ -106,7 +106,7 @@ gulp.task('test', 'Runs tests and exits.', ['test:setup'], function(done) {
   }
 
   gulp.src(src, { read: false })
-  .pipe(mocha())
+  .pipe(mocha({ timeout: 5000 }))
   .once('error', function(e) {
     done(e);
     process.exit(1);

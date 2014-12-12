@@ -259,7 +259,7 @@ describe('Fireproof.LiveArray', function() {
           'world'
         ]);
         done();
-      }, 150);
+      }, 500);
 
     });
 
