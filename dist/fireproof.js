@@ -1412,6 +1412,7 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
 
   self._ref.on(eventType, callbackHandler, function(err) {
 
+    Fireproof.stats._finish(id, err);
     Fireproof.stats._endListener(self, err);
 
     cancelCallback(err);
