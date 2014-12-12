@@ -1153,7 +1153,7 @@ Pager.prototype._handleResults = function(snap, requestedCount) {
     }
 
   } else {
-    if (snap.numChildren() < requestedCount) {
+    if (snap.numChildren() <= requestedCount) {
       objects = objects.slice(0, snap.numChildren() - 1);
     } else {
       objects = objects.slice(1, requestedCount);
@@ -1167,7 +1167,7 @@ Pager.prototype._handleResults = function(snap, requestedCount) {
 
   } else {
 
-    this.hasPrevious = snap.numChildren() >= requestedCount+1;
+    this.hasPrevious = snap.numChildren() === requestedCount+1;
     this.hasNext = true;
 
   }
@@ -1198,6 +1198,12 @@ Pager.prototype._handleResults = function(snap, requestedCount) {
   if (self._currentOperationCount === 0) {
     self._resetCurrentOperation();
   }
+
+  objects.forEach(function(object) {
+    console.log(object.key(), object.getPriority());
+  });
+
+  console.log('<<<<');
 
   return objects;
 
