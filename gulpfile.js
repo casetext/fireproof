@@ -6,13 +6,14 @@ var rmdir = require('rimraf'),
   rename = require('gulp-rename'),
   mocha = require('gulp-mocha'),
   concat = require('gulp-concat'),
+  uglify = require('gulp-uglify'),
   bump = require('gulp-bump'),
   wrap = require('gulp-wrap'),
   jsdoc2md = require('gulp-jsdoc-to-markdown'),
   filter = require('gulp-filter'),
   git = require('gulp-git'),
   tagVersion = require('gulp-tag-version'),
-  version = require('./package.json').version;
+  pkg = require('./package.json');
 
 
 function npmPublish(done) {
@@ -59,7 +60,10 @@ gulp.task('build', 'Builds the Javascript for distribution.', ['clean'], functio
 
   return gulp.src(['index.js', 'lib/*.js'])
   .pipe(concat('fireproof.js'))
-  .pipe(wrap({ src: 'umd.template' }, { version: version }))
+  .pipe(wrap({ src: 'umd.template' }, { pkg: pkg, year: new Date().getFullYear() }))
+  .pipe(gulp.dest('./dist'))
+  .pipe(rename('fireproof.min.js'))
+  .pipe(uglify({preserveComments: 'some'}))
   .pipe(gulp.dest('./dist'));
 
 });

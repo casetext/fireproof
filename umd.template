@@ -1,4 +1,6 @@
-
+/*! <%= pkg.name %> <%= pkg.version %>, © <%= year %> J2H2 Inc. <%= pkg.license %> License.
+ * <%= pkg.repository.url %>
+ */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.

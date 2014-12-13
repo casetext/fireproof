@@ -1,4 +1,6 @@
-
+/*! fireproof 2.3.1, © 2014 J2H2 Inc. ISC License.
+ * http://github.com/casetext/fireproof.git
+ */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
@@ -1198,12 +1200,6 @@ Pager.prototype._handleResults = function(snap, requestedCount) {
   if (self._currentOperationCount === 0) {
     self._resetCurrentOperation();
   }
-
-  objects.forEach(function(object) {
-    console.log(object.key(), object.getPriority());
-  });
-
-  console.log('<<<<');
 
   return objects;
 
