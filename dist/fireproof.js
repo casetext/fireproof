@@ -1,4 +1,4 @@
-/*! fireproof 2.3.1, © 2014 J2H2 Inc. ISC License.
+/*! fireproof 2.3.2, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -1655,10 +1655,10 @@ FireproofSnapshot.prototype.exportVal = function() {
 /**
  * Statistics about Firebase usage.
  * @namespace Fireproof.stats
- * @property {object} operationLog
- * @property {object} runningOperationCount
- * @property {object} operationCount
- * @property {object} listenCount
+ * @property {Object} operationLog
+ * @property {Number} runningOperationCount
+ * @property {Number} operationCount
+ * @property {Number} listenCount
  * @static
  */
 Fireproof.stats = { _eventSubscribers: {} };
@@ -1976,6 +1976,22 @@ Fireproof.prototype.createUser = function(credentials, onComplete) {
 
   var oc = Fireproof._handleError(onComplete);
   this._ref.createUser(credentials, oc);
+  return oc.promise;
+
+};
+
+
+/**
+ * Delegates Firebase#changeEmail.
+ * @method Fireproof#changeEmail
+ * @param {Object} credentials
+ * @param {Function} [onComplete]
+ * @returns {Promise}
+ */
+Fireproof.prototype.changePassword = function(credentials, onComplete) {
+
+  var oc = Fireproof._handleError(onComplete);
+  this._ref.changeEmail(credentials, oc);
   return oc.promise;
 
 };
