@@ -1,4 +1,4 @@
-/*! fireproof 2.4.1, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 2.4.2, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
