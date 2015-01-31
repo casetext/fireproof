@@ -1,4 +1,4 @@
-/*! fireproof 2.3.2, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 2.4.0, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -1410,6 +1410,16 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
   var id = Fireproof.stats._start('read', self);
   Fireproof.stats._startListener(self);
 
+  if (!self._ids) {
+    self._ids = [];
+  }
+
+  if (!self._ids[eventType]) {
+    self._ids[eventType] = [];
+  }
+
+  self._ids[eventType].push(id);
+
   if (typeof callback !== 'function') {
     callback = function() {};
   }
@@ -1422,6 +1432,7 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
 
     if (!finished) {
       finished = true;
+      self._ids[eventType].pop();
       Fireproof.stats._finish(id);
     }
 
@@ -1439,6 +1450,7 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
 
   self._ref.on(eventType, callbackHandler, function(err) {
 
+    self._ids[eventType].pop();
     Fireproof.stats._finish(id, err);
     Fireproof.stats._endListener(self, err);
 
@@ -1464,6 +1476,10 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
  * @param {object=} context
  */
 Fireproof.prototype.off = function(eventType, callback, context) {
+
+  if (this._ids && this._ids[eventType] && this._ids[eventType].length > 0) {
+    Fireproof.stats._finish(this._ids[eventType].pop());
+  }
 
   Fireproof.stats._endListener(this);
   this._ref.off(eventType, callback, context);
@@ -1670,9 +1686,25 @@ Fireproof.stats = { _eventSubscribers: {} };
  */
 Fireproof.stats.reset = function() {
 
-  Fireproof.stats.operationLog = {};
-  Fireproof.stats.runningOperationCount = 0;
-  Fireproof.stats.operationCount = 0;
+  var newOperationLog = {},
+    newRunningOperationCount = 0;
+
+  for (var id in Fireproof.stats.operationLog) {
+
+    var operation = Fireproof.stats.operationLog[id];
+
+    if (!operation.hasOwnProperty('finish')) {
+
+      newRunningOperationCount++;
+      newOperationLog[id] = operation;
+
+    }
+
+  }
+
+  Fireproof.stats.operationLog = newOperationLog;
+  Fireproof.stats.runningOperationCount = newRunningOperationCount;
+  Fireproof.stats.operationCount = newRunningOperationCount;
 
 };
 
@@ -1731,7 +1763,7 @@ Fireproof.stats._finish = function(id, err) {
     throw new Error('Fireproof: reference to unknown log event ' + id);
   }
 
-  if (!logEvent.end) {
+  if (!logEvent.finish) {
 
     Fireproof.stats.runningOperationCount--;
     Fireproof.stats.operationCount++;

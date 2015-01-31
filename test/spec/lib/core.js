@@ -20,13 +20,9 @@ describe('Fireproof', function() {
     it('hands back a snapshot of the ref by default', function(done) {
 
       fireproof.child('thentest').then(function(snap) {
-        console.log('got the result!');
         expect(snap.val()).to.equal(true);
         done();
-      }, function() {
-        console.log('got an error!');
-        done();
-      });
+      }, done);
 
     });
 

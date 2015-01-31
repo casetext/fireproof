@@ -53,6 +53,10 @@ describe('Fireproof.LiveArray', function() {
 
   });
 
+  after(function() {
+    liveArray.disconnect();
+  });
+
   describe('firebaseKeySort', function() {
 
     it('sorts an array of objects by the Firebase key sort algorithm', function() {
