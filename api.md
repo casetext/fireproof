@@ -45,6 +45,7 @@
   * [fireproof.off(eventType, [callback], [context])](#Fireproof#off)
   * [fireproof.once(eventType, successCallback, [failureCallback], [context])](#Fireproof#once)
   * [fireproof.createUser(credentials, [onComplete])](#Fireproof#createUser)
+  * [fireproof.changeEmail(credentials, [onComplete])](#Fireproof#changeEmail)
   * [fireproof.changePassword(credentials, [onComplete])](#Fireproof#changePassword)
   * [fireproof.resetPassword(credentials, [onComplete])](#Fireproof#resetPassword)
   * [fireproof.createUser(credentials, [onComplete])](#Fireproof#createUser)
@@ -134,6 +135,7 @@
   * [fireproof.off(eventType, [callback], [context])](#Fireproof#off)
   * [fireproof.once(eventType, successCallback, [failureCallback], [context])](#Fireproof#once)
   * [fireproof.createUser(credentials, [onComplete])](#Fireproof#createUser)
+  * [fireproof.changeEmail(credentials, [onComplete])](#Fireproof#changeEmail)
   * [fireproof.changePassword(credentials, [onComplete])](#Fireproof#changePassword)
   * [fireproof.resetPassword(credentials, [onComplete])](#Fireproof#resetPassword)
   * [fireproof.createUser(credentials, [onComplete])](#Fireproof#createUser)
@@ -487,6 +489,16 @@ Delegates Firebase#createUser.
 - \[onComplete\] `function`  
 
 **Returns**: `Promise`  
+<a name="Fireproof#changeEmail"></a>
+##fireproof.changeEmail(credentials, [onComplete])
+Delegates Firebase#changeEmail.
+
+**Params**
+
+- credentials `Object`  
+- \[onComplete\] `function`  
+
+**Returns**: `Promise`  
 <a name="Fireproof#changePassword"></a>
 ##fireproof.changePassword(credentials, [onComplete])
 Delegates Firebase#changePassword.
@@ -593,10 +605,10 @@ Statistics about Firebase usage.
 
 **Properties**
 
-- operationLog `object`  
-- runningOperationCount `object`  
-- operationCount `object`  
-- listenCount `object`  
+- operationLog `Object`  
+- runningOperationCount `Number`  
+- operationCount `Number`  
+- listenCount `Number`  
 
 **Members**
 
