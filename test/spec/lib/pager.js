@@ -93,6 +93,11 @@ describe('Pager', function() {
 
         });
 
+        return pager.next(20);
+
+      })
+      .then(function(children) {
+        expect(children.length).to.equal(0);
       });
 
     });
@@ -134,6 +139,11 @@ describe('Pager', function() {
           expect(result.getPriority()).to.equal(i++);
         });
 
+        return pager.previous(50);
+
+      })
+      .then(function(children) {
+        expect(children.length).to.equal(0);
       });
 
     });
