@@ -1045,6 +1045,9 @@ function Pager(ref, initialCount) {
   this._mainRef = ref.ref();
   this._resetCurrentOperation();
 
+  this.hasNext = true;
+  this.hasPrevious = false;
+
   if (initialCount) {
     var promise = this.next(initialCount);
     this.then = promise.then.bind(promise);
@@ -1072,27 +1075,37 @@ Pager.prototype.next = function(count) {
   var self = this;
     var requestedCount;
 
-  return self._currentOperation
-  .then(function() {
+  if (self.hasNext) {
 
-    self._direction = 'next';
-    var ref = self._mainRef;
-    if (self._page) {
+    return self._currentOperation
+    .then(function() {
 
-      requestedCount = count + 1;
-      ref = ref.orderByPriority().startAt(self._page.priority, self._page.key)
-      .limitToFirst(count + 2);
+      self._direction = 'next';
+      var ref = self._mainRef;
+      if (self._page) {
 
-    } else {
-      requestedCount = count;
-      ref = ref.startAt().limitToFirst(count + 1);
-    }
+        requestedCount = count + 1;
+        ref = ref.orderByPriority().startAt(self._page.priority, self._page.key)
+        .limitToFirst(count + 2);
 
-    return ref.once('value');
-  })
-  .then(function(snap) {
-    return self._handleResults(snap, requestedCount);
-  });
+      } else {
+        requestedCount = count;
+        ref = ref.startAt().limitToFirst(count + 1);
+      }
+
+      return ref.once('value');
+    })
+    .then(function(snap) {
+      return self._handleResults(snap, requestedCount);
+    });
+
+  } else {
+
+    var deferred = Fireproof._checkQ().defer();
+    deferred.resolve([]);
+    return deferred.promise;
+
+  }
 
 };
 
@@ -1111,27 +1124,37 @@ Pager.prototype.previous = function(count) {
 
   var self = this;
 
-  return self._currentOperation
-  .then(function() {
+  if (self.hasPrevious) {
 
-    self._direction = 'previous';
+    return self._currentOperation
+    .then(function() {
 
-    var ref = self._mainRef;
-    if (self._page) {
+      self._direction = 'previous';
 
-      ref = ref.orderByPriority().endAt(self._page.priority, self._page.key)
-      .limitToLast(count + 2);
+      var ref = self._mainRef;
+      if (self._page) {
 
-    } else {
-      throw new Error('Cannot call #previous on a Pager without calling #next first');
-    }
+        ref = ref.orderByPriority().endAt(self._page.priority, self._page.key)
+        .limitToLast(count + 2);
 
-    return ref.once('value');
+      } else {
+        throw new Error('Cannot call #previous on a Pager without calling #next first');
+      }
 
-  })
-  .then(function(snap) {
-    return self._handleResults(snap, count+1);
-  });
+      return ref.once('value');
+
+    })
+    .then(function(snap) {
+      return self._handleResults(snap, count+1);
+    });
+
+  } else {
+
+    var deferred = Fireproof._checkQ().defer();
+    deferred.resolve([]);
+    return deferred.promise;
+
+  }
 
 };
 
