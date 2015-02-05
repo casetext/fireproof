@@ -16,7 +16,7 @@ See the API documentation [here.](https://github.com/casetext/fireproof/blob/mas
 
 The bottom line is this: all Firebase methods are reproduced on a Fireproof object.
 
-You have to "bless" Fireproof with a promise library that follows the deferral model. Q.js, Kew, and Firebase $q are some examples. Just call Fireproof.bless(Q). 
+You have to "bless" Fireproof with a promise library that follows the deferral model. Q.js, Kew, and Angular $q are some examples. Just call Fireproof.bless(Q). 
 
 - If the corresponding Firebase method has no return value but does something asynchronously, Fireproof returns a promise that fulfills if the interaction succeeds and rejects if an error occurs. This is true of, e.g., ```transaction()```, ```auth()```, ```set()```, ```update()```, ```remove()```, and ```once()```.
 
