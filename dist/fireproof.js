@@ -1,4 +1,4 @@
-/*! fireproof 2.4.2, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 2.5.0, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -812,7 +812,7 @@ LiveArray.firebasePrioritySort = firebasePrioritySort;
  * @param {Fireproof} [ref] a Firebase ref whose children you wish to sync to.
  * @param {String} [sortMode] "key", "priority", or "child".
  * @param {String} [sortProperty] The name of the child property to sort on, if
- * sortMode is null.
+ * sortMode is "child".
  */
 LiveArray.prototype.connect = function(ref, sortMode, sortProperty) {
 
@@ -1292,6 +1292,16 @@ Fireproof.prototype.orderByChild = function(key) {
  */
 Fireproof.prototype.orderByKey = function() {
   return new Fireproof(this._ref.orderByKey());
+};
+
+
+/**
+ * Delegates Firebase#orderByValue.
+ * @method Fireproof#orderByValue
+ * @returns {Fireproof}
+ */
+Fireproof.prototype.orderByValue = function() {
+  return new Fireproof(this._ref.orderByValue());
 };
 
 
