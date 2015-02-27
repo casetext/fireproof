@@ -1,4 +1,4 @@
-/*! fireproof 2.5.0, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 2.5.1, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -2053,7 +2053,7 @@ Fireproof.prototype.createUser = function(credentials, onComplete) {
  * @param {Function} [onComplete]
  * @returns {Promise}
  */
-Fireproof.prototype.changePassword = function(credentials, onComplete) {
+Fireproof.prototype.changeEmail = function(credentials, onComplete) {
 
   var oc = Fireproof._handleError(onComplete);
   this._ref.changeEmail(credentials, oc);
