@@ -105,6 +105,7 @@ Fireproof._handleError = function(onComplete) {
 
 };
 
+var authPromise = null;
 
 /**
  * Tell Fireproof to use a given promise library from now on.
@@ -130,6 +131,10 @@ Fireproof.bless = function(newQ) {
 
   Q = newQ;
 
+  // set the auth promise to an empty promise
+  authPromise = Q.defer();
+  authPromise.resolve();
+
 };
 
 
@@ -139,52 +144,33 @@ Fireproof.bless = function(newQ) {
  * same time, the result of which is one or more of the promises will never
  * resolve.
  * Accordingly, it is necessary that we wrap authentication actions in a
- * global lock. This is accomplished using setInterval. No, I don't like it
+ * global lock. This is accomplished using promise chaining. No, I don't like it
  * any more than you do.
  */
-var authing = false;
 
 /**
- * Delegates Firebase#auth.
- * @method Fireproof#auth
- * @param {string} authToken Firebase authentication token.
- * @param {function=} onComplete Callback on initial completion.
- * @param {function=} onCancel Callback if we ever get disconnected.
- * @returns {Promise} Resolves on success, rejects on failure.
+ * Wraps auth methods so they execute in order.
+ * @method Fireproof#_wrapAuth
+ * @param {function} fn Auth function that generates a promise once it's done.
  */
-Fireproof.prototype.auth = function(authToken, onComplete, onCancel) {
+Fireproof.prototype._wrapAuth = function(fn) {
 
-  var deferred = Fireproof._checkQ().defer(),
-    self = this;
+  var self = this;
 
-  var authIntervalId = setInterval(function() {
+  authPromise = authPromise.finally(function() {
 
-    if (!authing) {
+    return fn.call(self)
+    .finally(function() {
 
-      authing = true;
-      self._ref.auth(authToken, function(err, info) {
+      // set the auth promise to an empty promise
+      authPromise = Fireproof._checkQ().defer();
+      authPromise.resolve();
 
-        authing = false;
-        clearInterval(authIntervalId);
-        if (err !== null) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(info);
-        }
+    });
 
-        if (typeof onComplete === 'function') {
-          Fireproof._nextTick(function() {
-            onComplete(err, info);
-          });
-        }
+  });
 
-      }, onCancel);
-
-    }
-
-  }, 1);
-
-  return deferred.promise;
+  return authPromise;
 
 };
 
