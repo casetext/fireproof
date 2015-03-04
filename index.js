@@ -157,18 +157,22 @@ Fireproof.prototype._wrapAuth = function(fn) {
 
   var self = this;
 
-  authPromise = authPromise.finally(function() {
+  var handle = function() {
 
-    return fn.call(self)
-    .finally(function() {
+    var innerHandle = function() {
 
       // set the auth promise to an empty promise
       authPromise = Fireproof._checkQ().defer();
       authPromise.resolve();
 
-    });
+    };
 
-  });
+    return fn.call(self)
+    .then(handle, handle);
+
+  };
+
+  authPromise = authPromise.then(handle, handle);
 
   return authPromise;
 
