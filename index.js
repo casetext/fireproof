@@ -105,7 +105,6 @@ Fireproof._handleError = function(onComplete) {
 
 };
 
-var authPromise = null;
 
 /**
  * Tell Fireproof to use a given promise library from now on.
@@ -131,11 +130,6 @@ Fireproof.bless = function(newQ) {
 
   Q = newQ;
 
-  // set the auth promise to an empty promise
-  var emptyDeferred = Q.defer();
-  emptyDeferred.resolve();
-  authPromise = emptyDeferred.promise;
-
 };
 
 
@@ -145,9 +139,11 @@ Fireproof.bless = function(newQ) {
  * same time, the result of which is one or more of the promises will never
  * resolve.
  * Accordingly, it is necessary that we wrap authentication actions in a
- * global lock. This is accomplished using promise chaining. No, I don't like it
- * any more than you do.
+ * global lock. This is accomplished by queuing operations in an array. No, I
+ * don't like it any more than you do.
  */
+
+var authOps = [];
 
 /**
  * Wraps auth methods so they execute in order.
@@ -158,26 +154,21 @@ Fireproof.prototype._wrapAuth = function(fn) {
 
   var self = this;
 
-  var handle = function() {
+  authOps.push(fn);
+  nextAuth();
 
-    var innerHandle = function() {
+  function nextAuth() {
+    if (!authOps.authing && authOps[0]) {
+      authOps.authing = true;
+      var thisAuth = authOps.pop();
+      thisAuth.call(self).then(done, done);
+    }
+  }
 
-      // set the auth promise to an empty promise
-      var emptyDeferred = Q.defer();
-      emptyDeferred.resolve();
-      authPromise = emptyDeferred.promise;
-
-    };
-
-    return fn.call(self)
-    .then(innerHandle, innerHandle);
-
-  };
-
-  authPromise = authPromise.then(handle, handle);
-
-  return authPromise;
-
+  function done() {
+    authOps.authing = false;
+    nextAuth();
+  }
 };
 
 
