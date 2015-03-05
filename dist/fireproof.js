@@ -179,7 +179,10 @@ Fireproof.prototype._wrapAuth = function(fn) {
     if (!authOps.authing && authOps[0]) {
       authOps.authing = true;
       var thisAuth = authOps.pop();
-      thisAuth.call(self).then(done, done);
+      thisAuth.call(self).then(done, function(err) {
+        done();
+        throw err;
+      });
     }
   }
 
