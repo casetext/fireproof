@@ -22,6 +22,15 @@ describe('auth method', function() {
 
     });
 
+    it('passes failures through correctly', function() {
+
+      return fireproof.authWithCustomToken('wrong')
+      .then(function() {
+        throw new Error('Should not have gotten here!');
+      }, function(err) {});
+
+    });
+
   });
 
 });
