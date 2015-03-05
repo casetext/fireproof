@@ -10,8 +10,9 @@ describe('Stats', function() {
 
   var statsRef;
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     statsRef = new Fireproof(firebase).child('statsRef');
+    setTimeout(done, 1); // This is necessary to allow all stats events from past tests to clear the event queue before starting the next test.  Works around strange timing issues on Windows.
   });
 
   describe('#reset', function() {
