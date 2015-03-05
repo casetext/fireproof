@@ -134,7 +134,7 @@ Fireproof.bless = function(newQ) {
   // set the auth promise to an empty promise
   var emptyDeferred = Q.defer();
   emptyDeferred.resolve();
-  return emptyDeferred.promise;
+  authPromise = emptyDeferred.promise;
 
 };
 
@@ -165,12 +165,12 @@ Fireproof.prototype._wrapAuth = function(fn) {
       // set the auth promise to an empty promise
       var emptyDeferred = Q.defer();
       emptyDeferred.resolve();
-      return emptyDeferred.promise;
+      authPromise = emptyDeferred.promise;
 
     };
 
     return fn.call(self)
-    .then(handle, handle);
+    .then(innerHandle, innerHandle);
 
   };
 

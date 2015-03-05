@@ -94,9 +94,11 @@ gulp.task('test:setup', 'Set up tests.', ['build'], function() {
   global.Fireproof = require('./dist/fireproof');
   global.Fireproof.bless(require('kew'));
 
-  global.firebase = new Firebase('https://' +
-    Math.random().toString(36).slice(2) +
-    '.firebaseio-demo.com');
+  if (!process.env.FIREBASE_TEST_URL) {
+    throw new Error('You must set FIREBASE_TEST_URL and FIREBASE_TEST_SECRET in your environment to run the tests.');
+  }
+
+  global.firebase = new Firebase(process.env.FIREBASE_TEST_URL);
 
 });
 
