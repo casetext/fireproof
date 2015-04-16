@@ -33,15 +33,32 @@ function Fireproof(firebaseRef, promise) {
 }
 
 
-var Q;
+var Q = typeof Promise === 'function' ? Promise : undefined;
 
 Fireproof._checkQ = function() {
 
   if (Q === undefined) {
-    throw new Error('You must supply a Defer-style promise library to Fireproof!');
+    throw new Error('You must supply a Promise library to Fireproof!');
   }
 
   return Q;
+
+};
+
+Fireproof.defer = function() {
+
+  var Q = Fireproof._checkQ();
+
+  if (typeof Q.defer === 'function') return Q.defer();
+
+  var deferred = {};
+
+  deferred.promise = new Q(function(resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+
+  return deferred;
 
 };
 
@@ -70,7 +87,7 @@ Fireproof._nextTick = function(fn) {
 
 Fireproof._handleError = function(onComplete) {
 
-  var deferred = Fireproof._checkQ().defer();
+  var deferred = Fireproof.defer();
 
   var rv = function(err, val) {
 
@@ -109,23 +126,29 @@ Fireproof._handleError = function(onComplete) {
 /**
  * Tell Fireproof to use a given promise library from now on.
  * @method Fireproof.bless
- * @param {Q} Q a Q-style promise constructor with at least defer().
- * @throws if you don't provide a valid Deferred-style promise library.
+ * @param {Q} Q a Q-style promise constructor with an optional defer().
+ * @throws if you don't provide a valid promise library.
  */
 Fireproof.bless = function(newQ) {
 
-  if (newQ === undefined || newQ === null || typeof(newQ.defer) !== 'function') {
-    throw new Error('You tried to give Fireproof an invalid Q library!');
-  }
+  function assert(value) {if (!value) throw null}
 
-  var deferred = newQ.defer();
-
-  if (deferred === undefined || deferred === null ||
-    deferred.promise === undefined || deferred.promise === null ||
-    typeof(deferred.reject) !== 'function' ||
-    typeof(deferred.resolve) !== 'function' ||
-    typeof(deferred.promise.then) !== 'function') {
-    throw new Error('You tried to give Fireproof an invalid Q library!');
+  try {
+    assert(newQ != null);
+    assert(typeof newQ.all === 'function');
+    if (typeof newQ.defer === 'function') {
+      var deferred = newQ.defer();
+      assert(typeof deferred.promise.then === 'function');
+      assert(typeof deferred.resolve === 'function');
+      assert(typeof deferred.reject === 'function');
+    } else {
+      assert(typeof newQ === 'function');
+      var promise = Object.create(newQ.prototype);
+      assert(typeof promise.then === 'function');
+      assert(typeof promise.catch === 'function');
+    }
+  } catch (e) {
+    throw new Error('You tried to give Fireproof an invalid promise constructor!');
   }
 
   Q = newQ;
