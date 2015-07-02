@@ -1,7 +1,6 @@
 {
   "name": "fireproof",
   "main": "dist/fireproof.js",
-  "version": "2.5.2",
   "homepage": "https://github.com/casetext/fireproof",
   "authors": [
     "Harry Schmidt <goldibex@casetext.com>"
