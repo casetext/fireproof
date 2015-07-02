@@ -1,4 +1,4 @@
-/*! fireproof 2.5.1, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 2.5.2, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -1609,6 +1609,18 @@ function FireproofSnapshot(snap) {
 }
 
 Fireproof.Snapshot = FireproofSnapshot;
+
+
+/**
+ * Delegates DataSnapshot#exists.
+ * @method FireproofSnapshot#exists
+ * @returns {Boolean} Whether any data exists at the location.
+ */
+FireproofSnapshot.prototype.exists = function() {
+  return this._snap.exists();
+};
+
+
 
 /**
  * Delegates DataSnapshot#child.
