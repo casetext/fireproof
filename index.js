@@ -32,33 +32,26 @@ function Fireproof(firebaseRef, promise) {
 
 }
 
-
-var Q = typeof Promise === 'function' ? Promise : undefined;
-
-Fireproof._checkQ = function() {
-
-  if (Q === undefined) {
-    throw new Error('You must supply a Promise library to Fireproof!');
-  }
-
-  return Q;
-
-};
-
 Fireproof.defer = function() {
 
-  var Q = Fireproof._checkQ();
+  if (Fireproof.Q === undefined) {
+    throw new Error('You must supply a Promise library to Fireproof by calling Fireproof.bless()!');
+  }
 
-  if (typeof Q.defer === 'function') return Q.defer();
+  if (typeof Fireproof.Q.defer === 'function') {
+    return Fireproof.Q.defer();
+  } else {
 
-  var deferred = {};
+    var deferred = {};
 
-  deferred.promise = new Q(function(resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
+    deferred.promise = new Fireproof.Q(function(resolve, reject) {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
+    });
 
-  return deferred;
+    return deferred;
+
+  }
 
 };
 
@@ -126,7 +119,7 @@ Fireproof._handleError = function(onComplete) {
 /**
  * Tell Fireproof to use a given promise library from now on.
  * @method Fireproof.bless
- * @param {Q} Q a Q-style promise constructor with an optional defer().
+ * @param {Q} Q a Q-style promise constructor with mandatory .all() and optional defer().
  * @throws if you don't provide a valid promise library.
  */
 Fireproof.bless = function(newQ) {
@@ -137,7 +130,7 @@ Fireproof.bless = function(newQ) {
     }
   }
 
-  assert(newQ != null);
+  assert(newQ !== null);
   assert(typeof newQ.all === 'function');
   if (typeof newQ.defer === 'function') {
     var deferred = newQ.defer();
@@ -151,7 +144,7 @@ Fireproof.bless = function(newQ) {
     assert(typeof promise.catch === 'function');
   }
 
-  Q = newQ;
+  Fireproof.Q = newQ;
 
 };
 
