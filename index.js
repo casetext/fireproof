@@ -131,24 +131,24 @@ Fireproof._handleError = function(onComplete) {
  */
 Fireproof.bless = function(newQ) {
 
-  function assert(value) {if (!value) throw null}
-
-  try {
-    assert(newQ != null);
-    assert(typeof newQ.all === 'function');
-    if (typeof newQ.defer === 'function') {
-      var deferred = newQ.defer();
-      assert(typeof deferred.promise.then === 'function');
-      assert(typeof deferred.resolve === 'function');
-      assert(typeof deferred.reject === 'function');
-    } else {
-      assert(typeof newQ === 'function');
-      var promise = Object.create(newQ.prototype);
-      assert(typeof promise.then === 'function');
-      assert(typeof promise.catch === 'function');
+  function assert(value) {
+    if (!value) {
+      throw new Error('You tried to give Fireproof an invalid promise constructor!');
     }
-  } catch (e) {
-    throw new Error('You tried to give Fireproof an invalid promise constructor!');
+  }
+
+  assert(newQ != null);
+  assert(typeof newQ.all === 'function');
+  if (typeof newQ.defer === 'function') {
+    var deferred = newQ.defer();
+    assert(typeof deferred.promise.then === 'function');
+    assert(typeof deferred.resolve === 'function');
+    assert(typeof deferred.reject === 'function');
+  } else {
+    assert(typeof newQ === 'function');
+    var promise = new newQ();
+    assert(typeof promise.then === 'function');
+    assert(typeof promise.catch === 'function');
   }
 
   Q = newQ;
