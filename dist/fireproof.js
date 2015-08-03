@@ -1,4 +1,4 @@
-/*! fireproof 3.0.0, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 3.0.2, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -1438,27 +1438,31 @@ Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLoca
 
   var id = Fireproof.stats._start('transaction', self);
 
-  self._ref.transaction(updateFunction, function(err, committed, snap) {
+  try {
+    self._ref.transaction(updateFunction, function(err, committed, snap) {
 
-    Fireproof.stats._finish(id, err);
-    snap = new Fireproof.Snapshot(snap);
+      Fireproof.stats._finish(id, err);
+      snap = new Fireproof.Snapshot(snap);
 
-    if (onComplete) {
-      onComplete(err, committed, snap);
-    }
+      if (onComplete) {
+        onComplete(err, committed, snap);
+      }
 
-    if (err) {
-      deferred.reject(err);
-    } else {
+      if (err) {
+        deferred.reject(err);
+      } else {
 
-      deferred.resolve({
-        committed: committed,
-        snapshot: snap
-      });
+        deferred.resolve({
+          committed: committed,
+          snapshot: snap
+        });
 
-    }
+      }
 
-  }, applyLocally);
+    }, applyLocally);
+  } catch(e) {
+    deferred.reject(e);
+  }
 
   return deferred.promise;
 
