@@ -149,45 +149,6 @@ Fireproof.bless = function(newQ) {
 };
 
 
-/* FIXME(goldibex): Find out the reason for this demonry.
- * For reasons completely incomprehensible to me, some type of race condition
- * is possible if multiple Fireproof references attempt authentication at the
- * same time, the result of which is one or more of the promises will never
- * resolve.
- * Accordingly, it is necessary that we wrap authentication actions in a
- * global lock. This is accomplished by queuing operations in an array. No, I
- * don't like it any more than you do.
- */
-
-var authOps = [];
-
-/**
- * Wraps auth methods so they execute in order.
- * @method Fireproof#_wrapAuth
- * @param {function} fn Auth function that generates a promise once it's done.
- */
-Fireproof.prototype._wrapAuth = function(fn) {
-
-  var self = this;
-
-  authOps.push(fn);
-  nextAuth();
-
-  function nextAuth() {
-    if (!authOps.authing && authOps[0]) {
-      authOps.authing = true;
-      var thisAuth = authOps.pop();
-      thisAuth.call(self).then(done, done);
-    }
-  }
-
-  function done() {
-    authOps.authing = false;
-    nextAuth();
-  }
-};
-
-
 /**
  * Delegates Firebase#child, wrapping the child in fireproofing.
  * @method Fireproof#child

@@ -167,45 +167,6 @@ Fireproof.bless = function(newQ) {
 };
 
 
-/* FIXME(goldibex): Find out the reason for this demonry.
- * For reasons completely incomprehensible to me, some type of race condition
- * is possible if multiple Fireproof references attempt authentication at the
- * same time, the result of which is one or more of the promises will never
- * resolve.
- * Accordingly, it is necessary that we wrap authentication actions in a
- * global lock. This is accomplished by queuing operations in an array. No, I
- * don't like it any more than you do.
- */
-
-var authOps = [];
-
-/**
- * Wraps auth methods so they execute in order.
- * @method Fireproof#_wrapAuth
- * @param {function} fn Auth function that generates a promise once it's done.
- */
-Fireproof.prototype._wrapAuth = function(fn) {
-
-  var self = this;
-
-  authOps.push(fn);
-  nextAuth();
-
-  function nextAuth() {
-    if (!authOps.authing && authOps[0]) {
-      authOps.authing = true;
-      var thisAuth = authOps.pop();
-      thisAuth.call(self).then(done, done);
-    }
-  }
-
-  function done() {
-    authOps.authing = false;
-    nextAuth();
-  }
-};
-
-
 /**
  * Delegates Firebase#child, wrapping the child in fireproofing.
  * @method Fireproof#child
@@ -294,6 +255,42 @@ function findOptions(onComplete, options) {
 
 }
 
+/* FIXME(goldibex): Find out the reason for this demonry.
+ * For reasons completely incomprehensible to me, some type of race condition
+ * is possible if multiple Fireproof references attempt authentication at the
+ * same time, the result of which is one or more of the promises will never
+ * resolve.
+ * Accordingly, it is necessary that we wrap authentication actions in a
+ * global lock. This is accomplished by queuing operations in an array. No, I
+ * don't like it any more than you do.
+ */
+
+var authOps = [];
+
+/**
+ * Wraps auth methods so they execute in order.
+ * @method Fireproof#_wrapAuth
+ * @param {function} fn Auth function that generates a promise once it's done.
+ */
+Fireproof._wrapAuth = function(fn) {
+
+  authOps.push(fn);
+  nextAuth();
+
+  function nextAuth() {
+    if (!authOps.authing && authOps[0]) {
+      authOps.authing = true;
+      var thisAuth = authOps.pop();
+      thisAuth().then(done, done);
+    }
+  }
+
+  function done() {
+    authOps.authing = false;
+    nextAuth();
+  }
+};
+
 /**
  * Delegates Firebase#auth.
  * @method Fireproof#auth
@@ -307,8 +304,9 @@ Fireproof.prototype.auth = function(authToken, onComplete, options) {
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.auth(authToken, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.auth(authToken, oc, options);
     return oc.promise;
   });
 
@@ -329,8 +327,9 @@ Fireproof.prototype.authWithCustomToken = function(authToken, onComplete, option
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authWithCustomToken(authToken, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authWithCustomToken(authToken, oc, options);
     return oc.promise;
   });
 
@@ -351,8 +350,9 @@ Fireproof.prototype.authAnonymously = function(onComplete, options) {
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authAnonymously(oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authAnonymously(oc, options);
   });
 
   return oc.promise;
@@ -373,8 +373,9 @@ Fireproof.prototype.authWithPassword = function(credentials, onComplete, options
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authWithPassword(credentials, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authWithPassword(credentials, oc, options);
     return oc.promise;
   });
 
@@ -396,8 +397,9 @@ Fireproof.prototype.authWithOAuthPopup = function(provider, onComplete, options)
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authWithOAuthPopup(provider, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authWithOAuthPopup(provider, oc, options);
     return oc.promise;
   });
 
@@ -419,8 +421,9 @@ Fireproof.prototype.authWithOAuthRedirect = function(provider, onComplete, optio
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authWithOAuthRedirect(provider, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authWithOAuthRedirect(provider, oc, options);
     return oc.promise;
   });
 
@@ -443,8 +446,9 @@ Fireproof.prototype.authWithOAuthToken = function(provider, credentials, onCompl
   var oc = Fireproof._handleError(onComplete);
   options = findOptions(onComplete, options);
 
-  this._wrapAuth(function() {
-    this._ref.authWithOAuthToken(provider, credentials, oc, options);
+  var self = this;
+  Fireproof._wrapAuth(function() {
+    self._ref.authWithOAuthToken(provider, credentials, oc, options);
     return oc.promise;
   });
 
