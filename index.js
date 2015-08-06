@@ -139,7 +139,7 @@ Fireproof.bless = function(newQ) {
     assert(typeof deferred.reject === 'function');
   } else {
     assert(typeof newQ === 'function');
-    var promise = new newQ();
+    var promise = new newQ(function () {});
     assert(typeof promise.then === 'function');
     assert(typeof promise.catch === 'function');
   }
@@ -224,4 +224,3 @@ Fireproof.prototype.key = function() {
 Fireproof.prototype.toString = function() {
   return this._ref.toString();
 };
-
