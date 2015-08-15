@@ -34,8 +34,8 @@ at any time just by treating it as a promise!
 var Fireproof = require('fireproof'),
   Firebase = require('firebase');
 
-var fb = new Firebase('https://test.firebaseio.com/thing'),
-  fp = new Fireproof(fb);
+var firebase = new Firebase('https://test.firebaseio.com/thing'),
+  fireproof = new Fireproof(firebase);
 
 fireproof.auth('my_auth_token').then(function() {
   console.log('Successfully authenticated.')
