@@ -2,6 +2,15 @@
   "name": "fireproof",
   "version": "3.0.3",
   "description": "Promises for Firebase objects.",
+  "keywords": [
+    "firebase",
+    "promise",
+    "async",
+    "await",
+    "yield",
+    "promisify",
+    "es6"
+  ],
   "main": "dist/fireproof.js",
   "scripts": {
     "test": "./node_modules/.bin/gulp test"
