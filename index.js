@@ -16,6 +16,16 @@
  */
 function Fireproof(firebaseRef, promise) {
 
+  if (!Fireproof.Promise) {
+
+    try {
+      Fireproof.Promise = Promise;
+    } catch(e) {
+      throw new Error('You must supply a Promise library to Fireproof!');
+    }
+
+  }
+
   this._ref = firebaseRef;
   if (promise && promise.then) {
     this.then = promise.then.bind(promise);
@@ -32,32 +42,42 @@ function Fireproof(firebaseRef, promise) {
 
 }
 
-Fireproof.defer = function() {
+/**
+ * Tell Fireproof to use a given defer-style promise library from now on.
+ * If you have native promises, you don't need to call this;
+ * if you want to substitute a different promise constructor, just set it on Fireproof.Promise directly.
+ * @deprecated
+ * @method Fireproof.bless
+ * @param {Function} Deferrable a deferrable promise constructor with .all().
+ * @throws if you don't provide a valid promise library.
+ */
+Fireproof.bless = function(Deferrable) {
+  
+  Fireproof.Promise = function(fn) {
 
-  if (Fireproof.Q === undefined) {
-    throw new Error('You must supply a Promise library to Fireproof by calling Fireproof.bless()!');
-  }
+    var deferred = Deferrable.defer();
+    this.then = deferred.promise.then.bind(deferred.promise);
+    fn(deferred.resolve.bind(deferred), deferred.reject.bind(deferred));
+    
+  };
 
-  if (typeof Fireproof.Q.defer === 'function') {
-    return Fireproof.Q.defer();
-  } else {
-
-    var deferred = {};
-
-    deferred.promise = new Fireproof.Q(function(resolve, reject) {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
+  Fireproof.Promise.all = Deferrable.all;
+  Fireproof.Promise.resolve = function(value) {
+    return new Fireproof.Promise(function(resolve) {
+      resolve(value);
     });
+  };
+  Fireproof.Promise.reject = function(value) {
+    return new Fireproof.Promise(function(resolve, reject) {
+      reject(value);
+    });
+  };
 
-    return deferred;
-
-  }
 
 };
 
 /**
  * Tell Fireproof to use a given function to set timeouts from now on.
- * NB: If you are using AMD/require.js, you MUST call this function!
  * @method Fireproof.setNextTick
  * @param {Function} nextTick a function that takes a function and
  * runs it in the immediate future.
@@ -80,7 +100,11 @@ Fireproof._nextTick = function(fn) {
 
 Fireproof._handleError = function(onComplete) {
 
-  var deferred = Fireproof.defer();
+  var resolve, reject;
+  var promise = new Fireproof.Promise(function(_resolve_, _reject_) {
+    resolve = _resolve_;
+    reject = _reject_;
+  });
 
   var rv = function(err, val) {
 
@@ -102,49 +126,16 @@ Fireproof._handleError = function(onComplete) {
     }
 
     if (err) {
-      deferred.reject(err);
+      reject(err);
     } else {
-      deferred.resolve(val);
+      resolve(val);
     }
 
   };
 
-  rv.promise = deferred.promise;
+  rv.promise = promise;
 
   return rv;
-
-};
-
-
-/**
- * Tell Fireproof to use a given promise library from now on.
- * @method Fireproof.bless
- * @param {Q} Q a Q-style promise constructor with mandatory .all() and optional defer().
- * @throws if you don't provide a valid promise library.
- */
-Fireproof.bless = function(newQ) {
-
-  function assert(value) {
-    if (!value) {
-      throw new Error('You tried to give Fireproof an invalid promise constructor!');
-    }
-  }
-
-  assert(newQ !== null);
-  assert(typeof newQ.all === 'function');
-  if (typeof newQ.defer === 'function') {
-    var deferred = newQ.defer();
-    assert(typeof deferred.promise.then === 'function');
-    assert(typeof deferred.resolve === 'function');
-    assert(typeof deferred.reject === 'function');
-  } else {
-    assert(typeof newQ === 'function');
-    var promise = new newQ(function () {});
-    assert(typeof promise.then === 'function');
-    assert(typeof promise.catch === 'function');
-  }
-
-  Fireproof.Q = newQ;
 
 };
 

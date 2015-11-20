@@ -1,8 +1,6 @@
 
 'use strict';
 
-var Q = require('kew');
-
 describe('auth method', function() {
 
   var fireproof;
@@ -14,7 +12,7 @@ describe('auth method', function() {
 
     it('works okay with multiple simultaneous attempts', function() {
 
-      return Q.all([
+      return Promise.all([
         fireproof.authWithCustomToken(process.env.FIREBASE_TEST_SECRET),
         fireproof.authWithCustomToken(process.env.FIREBASE_TEST_SECRET),
         fireproof.authWithCustomToken(process.env.FIREBASE_TEST_SECRET)

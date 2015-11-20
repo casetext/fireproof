@@ -1,4 +1,4 @@
-/*! fireproof 3.0.3, © 2015 J2H2 Inc. ISC License.
+/*! fireproof 3.0.4, © 2015 J2H2 Inc. ISC License.
  * http://github.com/casetext/fireproof.git
  */
 (function (root, factory) {
@@ -34,6 +34,16 @@
  */
 function Fireproof(firebaseRef, promise) {
 
+  if (!Fireproof.Promise) {
+
+    try {
+      Fireproof.Promise = Promise;
+    } catch(e) {
+      throw new Error('You must supply a Promise library to Fireproof!');
+    }
+
+  }
+
   this._ref = firebaseRef;
   if (promise && promise.then) {
     this.then = promise.then.bind(promise);
@@ -50,32 +60,42 @@ function Fireproof(firebaseRef, promise) {
 
 }
 
-Fireproof.defer = function() {
+/**
+ * Tell Fireproof to use a given defer-style promise library from now on.
+ * If you have native promises, you don't need to call this;
+ * if you want to substitute a different promise constructor, just set it on Fireproof.Promise directly.
+ * @deprecated
+ * @method Fireproof.bless
+ * @param {Function} Deferrable a deferrable promise constructor with .all().
+ * @throws if you don't provide a valid promise library.
+ */
+Fireproof.bless = function(Deferrable) {
+  
+  Fireproof.Promise = function(fn) {
 
-  if (Fireproof.Q === undefined) {
-    throw new Error('You must supply a Promise library to Fireproof by calling Fireproof.bless()!');
-  }
+    var deferred = Deferrable.defer();
+    this.then = deferred.promise.then.bind(deferred.promise);
+    fn(deferred.resolve.bind(deferred), deferred.reject.bind(deferred));
+    
+  };
 
-  if (typeof Fireproof.Q.defer === 'function') {
-    return Fireproof.Q.defer();
-  } else {
-
-    var deferred = {};
-
-    deferred.promise = new Fireproof.Q(function(resolve, reject) {
-      deferred.resolve = resolve;
-      deferred.reject = reject;
+  Fireproof.Promise.all = Deferrable.all;
+  Fireproof.Promise.resolve = function(value) {
+    return new Fireproof.Promise(function(resolve) {
+      resolve(value);
     });
+  };
+  Fireproof.Promise.reject = function(value) {
+    return new Fireproof.Promise(function(resolve, reject) {
+      reject(value);
+    });
+  };
 
-    return deferred;
-
-  }
 
 };
 
 /**
  * Tell Fireproof to use a given function to set timeouts from now on.
- * NB: If you are using AMD/require.js, you MUST call this function!
  * @method Fireproof.setNextTick
  * @param {Function} nextTick a function that takes a function and
  * runs it in the immediate future.
@@ -98,7 +118,11 @@ Fireproof._nextTick = function(fn) {
 
 Fireproof._handleError = function(onComplete) {
 
-  var deferred = Fireproof.defer();
+  var resolve, reject;
+  var promise = new Fireproof.Promise(function(_resolve_, _reject_) {
+    resolve = _resolve_;
+    reject = _reject_;
+  });
 
   var rv = function(err, val) {
 
@@ -120,49 +144,16 @@ Fireproof._handleError = function(onComplete) {
     }
 
     if (err) {
-      deferred.reject(err);
+      reject(err);
     } else {
-      deferred.resolve(val);
+      resolve(val);
     }
 
   };
 
-  rv.promise = deferred.promise;
+  rv.promise = promise;
 
   return rv;
-
-};
-
-
-/**
- * Tell Fireproof to use a given promise library from now on.
- * @method Fireproof.bless
- * @param {Q} Q a Q-style promise constructor with mandatory .all() and optional defer().
- * @throws if you don't provide a valid promise library.
- */
-Fireproof.bless = function(newQ) {
-
-  function assert(value) {
-    if (!value) {
-      throw new Error('You tried to give Fireproof an invalid promise constructor!');
-    }
-  }
-
-  assert(newQ !== null);
-  assert(typeof newQ.all === 'function');
-  if (typeof newQ.defer === 'function') {
-    var deferred = newQ.defer();
-    assert(typeof deferred.promise.then === 'function');
-    assert(typeof deferred.resolve === 'function');
-    assert(typeof deferred.reject === 'function');
-  } else {
-    assert(typeof newQ === 'function');
-    var promise = new newQ(function () {});
-    assert(typeof promise.then === 'function');
-    assert(typeof promise.catch === 'function');
-  }
-
-  Fireproof.Q = newQ;
 
 };
 
@@ -530,9 +521,7 @@ function Demux(refs, limit) {
   }, {});
 
   // we always want there to be a "previous" promise to hang operations from
-  var previousDeferred = Fireproof.defer();
-  previousDeferred.resolve([]);
-  this._previousPromise = previousDeferred.promise;
+  this._previousPromise = Fireproof.Promise.resolve([]);
 
   this._buffer = [];
 
@@ -562,7 +551,7 @@ Demux.prototype.get = function(count) {
 
       // We need to retrieve more objects from Firebase to satisfy the request.
 
-      return Fireproof.Q.all(self._refs.map(function(ref) {
+      return Fireproof.Promise.all(self._refs.map(function(ref) {
 
         var priority = self._positions[ref.ref().toString()].priority,
           name = self._positions[ref.ref().toString()].name;
@@ -1095,14 +1084,14 @@ function Pager(ref, initialCount) {
   this.hasNext = true;
   this.hasPrevious = false;
 
+  var promise;
   if (initialCount) {
-    var promise = this.next(initialCount);
-    this.then = promise.then.bind(promise);
+    promise = this.next(initialCount);
   } else {
-    var deferred = Fireproof.defer();
-    this.then = deferred.promise;
-    deferred.resolve([]);
+    promise = Fireproof.Promise.resolve([]);
   }
+   
+  this.then = promise.then.bind(promise);
 
 }
 
@@ -1147,11 +1136,7 @@ Pager.prototype.next = function(count) {
     });
 
   } else {
-
-    var deferred = Fireproof.defer();
-    deferred.resolve([]);
-    return deferred.promise;
-
+    return Fireproof.Promise.resolve([]);
   }
 
 };
@@ -1196,11 +1181,7 @@ Pager.prototype.previous = function(count) {
     });
 
   } else {
-
-    var deferred = Fireproof.defer();
-    deferred.resolve([]);
-    return deferred.promise;
-
+    return Fireproof.Promise.resolve([]);
   }
 
 };
@@ -1278,9 +1259,7 @@ Pager.prototype._handleResults = function(snap, requestedCount) {
 
 Pager.prototype._resetCurrentOperation = function() {
 
-  var deferred = Fireproof.defer();
-  deferred.resolve(null);
-  this._currentOperation = deferred.promise;
+  this._currentOperation = Fireproof.Promise.resolve(null);
   this._currentOperationCount = 0;
 
 };
@@ -1436,12 +1415,12 @@ Fireproof.prototype.ref = function() {
  */
 Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLocally) {
 
-  var deferred = Fireproof.defer(),
-    self = this;
+  var self = this;
 
   var id = Fireproof.stats._start('transaction', self);
 
-  try {
+  return new Fireproof.Promise(function(resolve, reject) {
+
     self._ref.transaction(updateFunction, function(err, committed, snap) {
 
       Fireproof.stats._finish(id, err);
@@ -1452,10 +1431,10 @@ Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLoca
       }
 
       if (err) {
-        deferred.reject(err);
+        reject(err);
       } else {
 
-        deferred.resolve({
+        resolve({
           committed: committed,
           snapshot: snap
         });
@@ -1463,11 +1442,8 @@ Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLoca
       }
 
     }, applyLocally);
-  } catch(e) {
-    deferred.reject(e);
-  }
-
-  return deferred.promise;
+  
+  });
 
 };
 
@@ -1486,8 +1462,7 @@ Fireproof.prototype.transaction = function(updateFunction, onComplete, applyLoca
  */
 Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) {
 
-  var deferred = Fireproof.defer(),
-    resolved = false,
+  var resolved = false,
     finished = false,
     self = this;
 
@@ -1512,6 +1487,12 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
     cancelCallback = function() {};
   }
 
+  var resolve, reject;
+  var promise = new Fireproof.Promise(function(_resolve_, _reject_) {
+    resolve = _resolve_;
+    reject = _reject_;
+  });
+
   var callbackHandler = function(snap, prev) {
 
     if (!finished) {
@@ -1525,12 +1506,12 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
     callback(snap, prev);
     if (!resolved) {
       resolved = true;
-      deferred.resolve(snap, prev);
+      resolve(snap, prev);
     }
 
   };
 
-  callbackHandler.then = deferred.promise.then.bind(deferred.promise);
+  callbackHandler.then = promise.then.bind(promise);
 
   self._ref.on(eventType, callbackHandler, function(err) {
 
@@ -1542,7 +1523,7 @@ Fireproof.prototype.on = function(eventType, callback, cancelCallback, context) 
 
     if (!resolved) {
       resolved = true;
-      deferred.reject(err);
+      reject(err);
     }
 
   }, context);
@@ -1583,37 +1564,38 @@ Fireproof.prototype.off = function(eventType, callback, context) {
  */
 Fireproof.prototype.once = function(eventType, successCallback, failureCallback, context) {
 
-  var deferred = Fireproof.defer(),
-    self = this;
+  var self = this;
 
-  var id = Fireproof.stats._start('read', self);
+  return new Fireproof.Promise(function(resolve, reject) {
 
-  if (typeof successCallback !== 'function') {
-    successCallback = function() {};
-  }
-
-  if (typeof failureCallback !== 'function') {
-    failureCallback = function() {};
-  }
-
-  self._ref.once(eventType, function(snap) {
-
-    Fireproof.stats._finish(id);
-    snap = new Fireproof.Snapshot(snap);
-
-    deferred.resolve(snap);
-    successCallback(snap);
-
-  }, function(err) {
-
-    Fireproof.stats._finish(id, err);
-
-    deferred.reject(err);
-    failureCallback(err);
-
-  }, context);
-
-  return deferred.promise;
+    var id = Fireproof.stats._start('read', self);
+  
+    if (typeof successCallback !== 'function') {
+      successCallback = function() {};
+    }
+  
+    if (typeof failureCallback !== 'function') {
+      failureCallback = function() {};
+    }
+  
+    self._ref.once(eventType, function(snap) {
+  
+      Fireproof.stats._finish(id);
+      snap = new Fireproof.Snapshot(snap);
+  
+      resolve(snap);
+      successCallback(snap);
+  
+    }, function(err) {
+  
+      Fireproof.stats._finish(id, err);
+  
+      reject(err);
+      failureCallback(err);
+  
+    }, context);
+   
+   });
 
 };
 

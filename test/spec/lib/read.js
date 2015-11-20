@@ -1,8 +1,6 @@
 
 'use strict';
 
-var Q = require('kew');
-
 var fireproof;
 
 describe('Read operation', function() {
@@ -44,7 +42,7 @@ describe('Read operation', function() {
 
       fireproof = new Fireproof(firebase);
 
-      return Q.all([
+      return Promise.all([
 
         fireproof.child('onTest/foo')
         .setWithPriority('bar', 3),
