@@ -3,8 +3,7 @@
 'use strict';
 
 
-var url = require('url'),
-  Q = require('kew');
+var url = require('url');
 
 describe('Stats', function() {
 
@@ -64,7 +63,7 @@ describe('Stats', function() {
 
       this.timeout(5000);
 
-      return Q.all([
+      return Promise.all([
         statsRef.child('a').set(true),
         statsRef.child('b').set(true),
         statsRef.child('b2').remove(),

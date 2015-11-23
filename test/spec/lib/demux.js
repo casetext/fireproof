@@ -1,8 +1,6 @@
 
 'use strict';
 
-var Q = require('kew');
-
 describe('Demux', function() {
 
   var fireproof = new Fireproof(firebase);
@@ -106,7 +104,7 @@ describe('Demux', function() {
 
       var firstDone = false;
 
-      return Q.all([
+      return Promise.all([
 
         demux.get(4)
         .then(function(snaps) {

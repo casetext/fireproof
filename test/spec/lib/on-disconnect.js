@@ -12,9 +12,9 @@ describe('onDisconnect', function() {
 
   describe('#set', function() {
 
-    it('promises to set the ref to the specified value on disconnect', function() {
+    it('promises to set the ref to the specified value on disconnect', function(done) {
 
-      return fireproof
+      fireproof
       .child('odSet')
       .onDisconnect()
       .set(true)
@@ -28,7 +28,8 @@ describe('onDisconnect', function() {
       })
       .then(function(snap) {
         expect(snap.val()).to.equal(true);
-      });
+      })
+      .then(done, done);
 
     });
 
@@ -37,9 +38,9 @@ describe('onDisconnect', function() {
 
   describe('#remove', function() {
 
-    it('promises to remove the data at specified ref on disconnect', function() {
+    it('promises to remove the data at specified ref on disconnect', function(done) {
 
-      return fireproof
+      fireproof
       .child('odSet')
       .onDisconnect()
       .remove()
@@ -53,7 +54,8 @@ describe('onDisconnect', function() {
       })
       .then(function(snap) {
         expect(snap.val()).to.equal(null);
-      });
+      })
+      .then(done, done);
 
     });
 
@@ -62,9 +64,9 @@ describe('onDisconnect', function() {
 
   describe('#setWithPriority', function() {
 
-    it('promises to set the ref to a value/priority on disconnect', function() {
+    it('promises to set the ref to a value/priority on disconnect', function(done) {
 
-      return fireproof
+      fireproof
       .child('odSet')
       .onDisconnect()
       .setWithPriority(true, 5)
@@ -79,7 +81,8 @@ describe('onDisconnect', function() {
       .then(function(snap) {
         expect(snap.val()).to.equal(true);
         expect(snap.getPriority()).to.equal(5);
-      });
+      })
+      .then(done, done);
 
     });
 
@@ -87,9 +90,9 @@ describe('onDisconnect', function() {
 
   describe('#update', function() {
 
-   it('promises to update the ref with the given values on disconnect', function() {
+   it('promises to update the ref with the given values on disconnect', function(done) {
 
-      return fireproof
+      fireproof
       .child('odUpdate')
       .set({ foo: 'bar', baz: 'quux' })
       .then(function() {
@@ -112,7 +115,8 @@ describe('onDisconnect', function() {
           baz: 'bells',
           whistles: true
         });
-      });
+      })
+      .then(done, done);
 
     });
 
@@ -121,9 +125,9 @@ describe('onDisconnect', function() {
 
   describe('#cancel', function() {
 
-   it('promises to cancel all onDisconnect operations at the ref', function() {
+   it('promises to cancel all onDisconnect operations at the ref', function(done) {
 
-      return fireproof.child('odCancel')
+      fireproof.child('odCancel')
       .onDisconnect().set({ foo: 'bar '})
       .then(function() {
         return fireproof.child('odCancel')
@@ -139,7 +143,8 @@ describe('onDisconnect', function() {
       })
       .then(function(snap) {
         expect(snap.val()).to.equal(null);
-      });
+      })
+      .then(done, done);
 
     });
 

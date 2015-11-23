@@ -16,7 +16,19 @@ See the API documentation [here.](https://github.com/casetext/fireproof/blob/mas
 
 The bottom line is this: all Firebase methods are reproduced on a Fireproof object.
 
-You can choose to "bless" Fireproof with a promise library that follows the deferral model, or any spec-compliant promise constructor. Q.js, Kew, and Angular $q are some examples. Just call Fireproof.bless(Q). If you don't, Fireproof tries to use the native Promise constructor, if available.
+By default, Fireproof uses the built-in Promise constructor, which is available in Node > 0.12 and many modern web browsers. You can override this behavior by providing a standards-compliant Promise constructor on Fireproof's constructor, like so:
+
+```js
+Fireproof.Promise = require('bluebird');
+```
+
+You can also choose to "bless" Fireproof with a promise library that follows the deferral model:
+
+```js
+Fireproof.bless(require('Q'));
+```
+
+If a Promise constructor is not supplied and none exists natively, Fireproof will explode spectacularly.
 
 - If the corresponding Firebase method has no return value but does something asynchronously, Fireproof returns a promise that fulfills if the interaction succeeds and rejects if an error occurs. This is true of, e.g., ```transaction()```, ```auth()```, ```set()```, ```update()```, ```remove()```, and ```once()```.
 

@@ -9,7 +9,6 @@ describe('Fireproof', function() {
     fireproof = new Fireproof(firebase);
   });
 
-
   describe('#then', function() {
 
     before(function() {
@@ -19,6 +18,20 @@ describe('Fireproof', function() {
 
     it('hands back a snapshot of the ref by default', function(done) {
 
+      fireproof.child('thentest').then(function(snap) {
+        expect(snap.val()).to.equal(true);
+        done();
+      }, done);
+
+    });
+
+  });
+
+  describe('bless', function() {
+
+    it('handles deferrable promise libraries okay', function(done) {
+      
+      Fireproof.bless(require('kew'));
       fireproof.child('thentest').then(function(snap) {
         expect(snap.val()).to.equal(true);
         done();

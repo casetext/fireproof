@@ -1,6 +1,6 @@
 {
   "name": "fireproof",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "description": "Promises for Firebase objects.",
   "keywords": [
     "firebase",
@@ -31,7 +31,7 @@
     "gulp-filter": "^1.0.2",
     "gulp-git": "^0.5.3",
     "gulp-help": "^1.3.0",
-    "gulp-jsdoc-to-markdown": "^0.1.5",
+    "gulp-jsdoc-to-markdown": "^1.1.1",
     "gulp-mocha": "^1.1.1",
     "gulp-rename": "^1.2.0",
     "gulp-tag-version": "^1.1.0",

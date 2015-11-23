@@ -1,11 +1,19 @@
 
 'use strict';
 
-var Q = require('kew');
-
 describe('write operation', function() {
 
   var fireproof;
+
+  function delay(ms) {
+    return function(val) {
+      return new Promise(function(resolve) {
+        setTimeout(function() {
+          resolve(val);
+        }, ms);
+      });
+    };
+  }
 
   beforeEach(function() {
     fireproof = new Fireproof(firebase);
@@ -13,21 +21,18 @@ describe('write operation', function() {
 
   describe('#set', function() {
 
-    it('promises to set the object to the given value', function() {
+    it('promises to set the object to the given value', function(done) {
 
       var didSet;
-      return
-        fireproof.child('test')
-        .set(true, function(err) {
-          console.log('hi');
-          didSet = (err === null);
-        })
-        .delay(10)
-        .then(function() {
-          console.log('hello');
-          expect(didSet).to.equal(true);
-        });
-      //.to.be.fulfilled;
+      fireproof.child('test')
+      .set(true, function(err) {
+        didSet = (err === null);
+      })
+      .then(delay(50))
+      .then(function() {
+        expect(didSet).to.equal(true);
+        done();
+      });
 
     });
 
@@ -35,17 +40,18 @@ describe('write operation', function() {
 
   describe('#update', function() {
 
-    it('promises to update the object to the given value', function() {
+    it('promises to update the object to the given value', function(done) {
 
       var didUpdate;
-      return expect(fireproof.child('thing')
+      expect(fireproof.child('thing')
       .update({ 'foo': 'bar' }, function(err) {
         didUpdate = (err === null);
       })
-      .delay(10)
+      .then(delay(50))
       .then(function() {
         expect(didUpdate).to.equal(true);
-      })).to.be.fulfilled;
+        done();
+      }));
 
     });
 
@@ -53,16 +59,17 @@ describe('write operation', function() {
 
   describe('#remove', function() {
 
-    it('promises to remove the object', function() {
+    it('promises to remove the object', function(done) {
 
       var didRemove;
-      return expect(fireproof.remove(function(err) {
+      fireproof.remove(function(err) {
         didRemove = (err === null);
       })
-      .delay(10)
+      .then(delay(50))
       .then(function() {
         expect(didRemove).to.equal(true);
-      })).to.be.fulfilled;
+        done();
+      })
 
     });
 
@@ -70,27 +77,21 @@ describe('write operation', function() {
 
   describe('#push', function() {
 
-    it('returns a Fireproof that promises to add the new child', function() {
+    it('returns a Fireproof that promises to add the new child', function(done) {
 
       var didPush;
 
-      var newProof = fireproof.child('list')
+      fireproof.child('list')
       .push({
         'foo': 'bar'
       }, function(err) {
         didPush = (err === null);
       })
-      .then(function(obj) {
-        console.log(obj);
-      });
-
-      var testPromise = Q.resolve(newProof)
-      .delay(50)
+      .then(delay(50))
       .then(function() {
         expect(didPush).to.equal(true);
+        done();
       });
-
-      return expect(testPromise).to.be.fulfilled;
 
     });
 
@@ -98,17 +99,18 @@ describe('write operation', function() {
 
   describe('#setWithPriority', function() {
 
-    it('promises to set the ref to the given value and priority', function() {
+    it('promises to set the ref to the given value and priority', function(done) {
 
       var didSet;
-      return expect(fireproof.child('test')
+      fireproof.child('test')
       .setWithPriority(true, 0, function(err) {
         didSet = (err === null);
       })
-      .delay(50)
+      .then(delay(50))
       .then(function() {
         expect(didSet).to.equal(true);
-      })).to.be.fulfilled;
+        done();
+      });
 
     });
 
@@ -116,18 +118,19 @@ describe('write operation', function() {
 
   describe('#setPriority', function() {
 
-    it('promises to set the ref to the given priority', function() {
+    it('promises to set the ref to the given priority', function(done) {
 
       var didSet;
 
-      return expect(fireproof.child('test')
+      fireproof.child('test')
       .setPriority(1, function(err) {
         didSet = (err === null);
       })
-      .delay(50)
+      .then(delay(50))
       .then(function() {
         expect(didSet).to.equal(true);
-      })).to.be.fulfilled;
+        done();
+      });
 
     });
 
