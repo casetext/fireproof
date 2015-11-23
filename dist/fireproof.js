@@ -42,6 +42,9 @@ function Fireproof(firebaseRef, promise) {
       throw new Error('You must supply a Promise library to Fireproof!');
     }
 
+  } else if (typeof Fireproof.Promise !== 'function') {
+    throw new Error('The supplied value of Fireproof.Promise is not a constructor (got ' +
+        Fireproof.Promise + ')');
   }
 
   this._ref = firebaseRef;
