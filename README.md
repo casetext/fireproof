@@ -56,6 +56,26 @@ fireproof.auth('my_auth_token').then(function() {
 })
 ```
 
+### Async Functions
+
+This library returns promises and will work well with async functions. 
+
+```javascript
+// Pushing a record using an async function
+var ref = fireproof.child('myref')
+var pushref = ref.push({ /* some object */ })
+
+// This is the key of the newly pushed location.
+// Note that it is called on the result of ref.push, and not the result of an async function.
+console.log(pushref.key())
+
+var error = await pushref
+if (error) {
+  console.error('Something went wrong pushing ' + pushref.key())
+  console.error(error)
+}
+```
+
 ## Support
 
 IE back to 9.
