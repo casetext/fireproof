@@ -2,7 +2,7 @@
 fireproof [deprecated]
 =========
 
-[Firebase 2.4.0](https://cdn.firebase.com/js/client/2.4.0/firebase.js) returns Promises without any need for extra help. Hooray!
+[Firebase 2.4.0](https://www.firebase.com/docs/web/changelog.html) returns Promises without any need for extra help. Hooray!
 
 ![A celebratory .gif of Sonic the Hedgehog running forever with a rainbow trailing from his butt.](http://30.media.tumblr.com/tumblr_lvyx3aVWsS1qcmpuao1_500.gif)
 
