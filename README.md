@@ -1,17 +1,70 @@
 
-fireproof [deprecated]
+fireproof
 =========
+
+A library with some useful utilities for Firebase.
+
+## LiveArray
+
+An object encapsulating arrays that keeps their members in sync with a Firebase location's children. The three array references, `keys`, `values`, and `priorities`, are guaranteed to persist for the lifetime of the array. In other words, the arrays themselves are constant; only their contents are mutable. This is highly useful behavior for dirty-checking environments like Angular.js.
+
+Note that changes to the array are not propagated to Firebase.
+
+Usage example:
+
+```js
+var Firebase = require('firebase');
+var Fireproof = require('fireproof');
+
+var stooges = new Fireproof.LiveArray(function(err) {
+  console.error('Hmm, Firebase disconnected with this error: ' + err.message);
+});
+
+users.connect(new Firebase('https://my-firebase.firebaseio.com/stooges'));
+
+// some time in the future...
+console.log(users.keys);
+[
+  'larry',
+  'curly',
+  'moe'
+]
+
+console.log(users.values);
+[{
+  name: 'Curly Howard',
+  catchphrase: 'Nyuk-nyuk-nyuk!'
+}, {
+  name: 'Larry Fine',
+  occupation: 'Violinist'
+}, {
+  name: 'Moe Howard',
+  haircut: 'bowl'
+}]
+
+console.log(users.priorities);
+[1,2,3]
+
+users.disconnect();
+
+```
+JSDocs are inline.
+
+## Pager
+
+A helper object for paging over Firebase data.
+
+## Demux
+
+A helper object for retrieving sorted Firebase objects from multiple locations.
+
+## Promise support now deprecated
 
 [Firebase 2.4.0](https://www.firebase.com/docs/web/changelog.html) returns Promises without any need for extra help. Hooray!
 
 ![A celebratory .gif of Sonic the Hedgehog running forever with a rainbow trailing from his butt.](http://30.media.tumblr.com/tumblr_lvyx3aVWsS1qcmpuao1_500.gif)
 
 Thanks so much for all your help guys.
-
-## Original docs
-
-Firebase runs hot! Don't burn yourself with callbacks. Use promises instead.
-Fireproof wraps Firebase objects with lightweight promise support.
 
 ## Installation
 ```bash
