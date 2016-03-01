@@ -4,7 +4,7 @@ fireproof
 
 A library with some useful utilities for Firebase.
 
-## LiveArray
+## [LiveArray](https://github.com/casetext/fireproof/blob/master/api.md#Fireproof.LiveArray)
 
 An object encapsulating arrays that keeps their members in sync with a Firebase location's children. The three array references, `keys`, `values`, and `priorities`, are guaranteed to persist for the lifetime of the array. In other words, the arrays themselves are constant; only their contents are mutable. This is highly useful behavior for dirty-checking environments like Angular.js.
 
@@ -50,13 +50,73 @@ users.disconnect();
 ```
 JSDocs are inline.
 
-## Pager
+## [Pager](https://github.com/casetext/fireproof/blob/master/api.md#Fireproof.Pager)
 
-A helper object for paging over Firebase data.
+A helper object for paging over Firebase data. You can call `next` and `previous` on it with the number of objects to get in the next page, which is expressed as an `Array` of snapshots.
 
-## Demux
+Usage example:
 
-A helper object for retrieving sorted Firebase objects from multiple locations.
+```js
+var Firebase = require('firebase');
+var Fireproof = require('fireproof');
+
+var stoogesRef = new Fireproof(new Firebase('https://people.firebaseio-demo.com/stooges'));
+var pager = new Fireproof.Pager(stoogesRef);
+pager.next(2).then(function(snaps) {
+  console.log(snaps.length); // 2
+  console.log(snaps[0].child('name').val()); // Curly Howard
+  console.log(snaps[1].child('name').val()); // Larry Fine
+  return pager.next(2);
+})
+.then(function(snaps) {
+  console.log(snaps.length); // 1
+  console.log(snaps[0].child('name').val()); // Moe Howard
+  return pager.previous(1);
+})
+.then(function(snaps) {
+  console.log(snaps.length); // 1
+  console.log(snaps[0].child('name').val()); // Larry Fine
+});
+```
+
+## [stats](https://github.com/casetext/fireproof/blob/master/api.md#Fireproof.stats)
+
+A helper that reports usage data, so you can figure out which Firebase locations you're reading and writing most often.
+
+Usage example:
+
+```js
+root.child('foo').set(true)
+.then(function() {
+  console.log(Fireproof.stats.getPathCounts());
+  {
+    write: {
+      'foo': 1
+    }
+  }
+  
+  return root.child('foo');
+})
+.then(function() {
+  console.log(Fireproof.stats.getPathCounts());
+  {
+    readOnce: {
+      'foo': 1
+    },
+    write: {
+      'foo': 1
+    }
+  }  
+
+  stats.reset();
+  console.log(Fireproof.stats.getPathCounts());
+  {}
+})
+```
+
+## [Demux (deprecated)](https://github.com/casetext/fireproof/blob/master/api.md#Fireproof.Demux)
+
+See the documentation (linked above) for details.
 
 ## Promise support now deprecated
 
